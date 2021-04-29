@@ -121,7 +121,7 @@
    /* to stop flickering of text in safari */
    
    transform-origin: 0 0;
-   transform: translate(-100%, 0%);
+   transform: translate(0%, -100%);
    
    transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
  }
@@ -145,15 +145,17 @@
  
  
  
- .circle-button {
-   position: absolute;
-   bottom: 0;
-   right: 3.5em;
-   width: 70px;
-   height: 70px;
+ .category {
+   position: fixed;
+   right: 15%;
+   top: 5%;
+   width: 50px;
+   height: 50px;
+   text-align: center;
+   vertical-align: middle;
    font-size: 1.5em;
    color: #fff;
-   background: #fff;
+   background: rgb(74, 128, 228);
    border: none;
    border-radius: 50%;
    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.275);
@@ -161,7 +163,7 @@
    cursor: pointer;
    transition: all 300ms ease;
  }
- .circle-button .close {
+ /* .circle-button .close {
    transition: transform 400ms ease;
  }
  .circle-button:hover {
@@ -170,8 +172,28 @@
  
  .closeRotate {
    transform: rotate(45deg);
- }
+ } */
  
  body, h1, h2, h3, h4, h5, h6, p {
    font-family: Work Sans;
+ }
+
+ #menu_category {
+  position: relative;
+  width: 80%;
+   
+   /* margin: -100px 0 0 -50px; */
+   margin: -120px 0 0 0;
+   padding: 20%;
+   padding-top: 125px;
+   
+   background: #dddbee;
+   list-style-type: none;
+   -webkit-font-smoothing: antialiased;
+   /* to stop flickering of text in safari */
+   
+   transform-origin: 0 0;
+   transform: translate(0%, -100%);
+   
+   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
  }
