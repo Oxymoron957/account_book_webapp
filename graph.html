@@ -58,37 +58,51 @@
         <div class="graph">
             <div class="row my-3"> 
                 <div class="col"> 
-                    <h4>Bootstrap 4 Chart.js - Line Chart</h4> 
+                    <h4>소비액</h4> 
                 </div>
              </div>
 
               <div class="row my-2">
                 <div class="col"> 
-                    <div class="card"> 
-                        <div class="card-body"> 
-                            <canvas id="myChart" height="100"></canvas>
+                    <div class="card">
+                        bb
+                        <div class="card-body">
+                            aa
+                            <canvas id="myChart" style="height:30vh; width:80vw">></canvas>
                         </div>
                     </div> 
                 </div> 
             </div>
+            cc
             <script>
                 var ctx = document.getElementById('myChart').getContext('2d');
                 var chart = new Chart(ctx, {
                   // 챠트 종류를 선택
                   type: 'line',
-            
+                  
+                
                   // 챠트를 그릴 데이타
                   data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월','8월','9월','10월','11월','12월'],
                     datasets: [{
-                      label: 'My First dataset',
+                      label: '월별 소비액',
                       backgroundColor: 'transparent',
-                      borderColor: 'red',
-                      data: [0, 10, 5, 2, 20, 30, 45]
+                    //   backgroundColor: 'black',
+                      borderColor: 'blue',
+                      data: [110, 130, 59, 23, 520, 30, 145,55,22,333,555,33]
                     }]
                   },
                   // 옵션
-                  options: {}
+                  options: {
+                      responsive: false,
+                      scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                        },
+                  }
                 });
               </script>
         </div>   
