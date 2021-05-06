@@ -87,7 +87,7 @@
    transform-origin: 0% 100%;
  }
  
- #menuToggle input:checked ~ span
+ /* #menuToggle input:checked ~ span
  {
    opacity: 1;
    transform: rotate(45deg) translate(-2px, -1px);
@@ -103,13 +103,13 @@
  #menuToggle input:checked ~ span:nth-last-child(2)
  {
    transform: rotate(-45deg) translate(0, -1px);
- }
+ } */
  
  #menu
  {
    position: relative;
    width: 100%;
-   
+   display: none;
    /* margin: -100px 0 0 -50px; */
    margin: -120px 0 0 0;
    padding: 20%;
@@ -119,11 +119,11 @@
    list-style-type: none;
    -webkit-font-smoothing: antialiased;
    /* to stop flickering of text in safari */
-   
+/*    
    transform-origin: -100% 0;
    transform: translate(0%, -100%);
    
-   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
+   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); */
  }
  
  #menu li

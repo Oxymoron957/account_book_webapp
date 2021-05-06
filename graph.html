@@ -26,11 +26,22 @@
 
     <link rel="stylesheet" type="text/css" href="css/graphOption.css">
     <title>Graph</title>
+
+    <script>
+        // $('#menu').show();
+
+        $( document ).ready( function() {
+          $( '#M' ).click( function() {
+            $( '#menu' ).slideToggle();
+          } );
+        } );
+    </script>
+
 </head>
 <body>
     <div id="option">
         <div id="menuToggle">
-            <input type="checkbox" />
+            <input type="checkbox" id="M"/>
         
             <span></span>
             <span></span>
@@ -68,7 +79,7 @@
                         bb
                         <div class="card-body">
                             aa
-                            <canvas id="myChart" style="height:30vh; width:80vw">></canvas>
+                            <canvas id="myChart" style="height:50vh; width:100%">></canvas>
                         </div>
                     </div> 
                 </div> 
