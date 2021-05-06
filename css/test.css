@@ -1,102 +1,15 @@
-html,
-body {
-  height: 100%;
-}
 
-body {
-  background-color: #2d3352;
-  font-family: "Quicksand";
-  color: #555;
-  font-size: 11px;
-}
 
-h1,
-h2 {
-  font-weight: 700;
-}
-
-.uppercase {
-  text-transform: uppercase;
-  letter-spacing: 0.05rem;
-}
 
 .icon {
   cursor: pointer;
-}
-
-.container {
-  min-height: 100%;
-  margin-left: -150px;
-  padding: 20px 0;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.screen {
-  width: 280px;
-  height: 497.7777777778px;
-  box-shadow: 0 0 80px rgba(0, 0, 0, 0.3);
-}
-
-.menu-view {
-  background-color: #3E486D;
-  position: relative;
-  transform: scale(0.9);
-  transform-origin: 150% 50%;
-}
-.menu-view .menu-item {
-  height: 76.5811965812px;
-  line-height: 76.5811965812px;
-  color: white;
-  border-left: 2px solid transparent;
-  cursor: pointer;
-}
-.menu-view .menu-item > * {
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-}
-.menu-view .menu-item > *:not(.badge) {
-  opacity: 0.5;
-}
-.menu-view .menu-item .icon {
-  margin: 2px 1.5rem auto 1.5rem;
-}
-.menu-view .menu-item .badge {
-  background-color: #FD7F72;
-  padding: 5px 11px;
-  margin-left: 2rem;
-  border-radius: 999px;
-}
-.menu-view .menu-item:hover {
-  background-color: #373f60;
-}
-.menu-view .menu-item.active {
-  background-color: #313857;
-  border-color: #FD7F72;
-}
-.menu-view .menu-item.active .text {
-  opacity: 1;
 }
 
 .list-view {
   background-color: white;
   position: relative;
 }
-.list-view header {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space between;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-.list-view header .icon {
-  padding: 1.5rem;
-}
-.list-view header h1 {
-  flex-grow: 1;
-  text-align: center;
-}
+
 .list-view .list-item {
   background-color: #FD7F72;
   color: white;

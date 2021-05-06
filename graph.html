@@ -25,6 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/graphOption.css">
+    <link rel="stylesheet" type="text/css" href="css/graphList.css">
     <title>Graph</title>
 
     <script>
@@ -36,7 +37,23 @@
           } );
         } );
     </script>
-
+    <script>
+        $(document).ready(function() {
+        var $cards = $('.card');
+            $menuItems = $('.menu-item');
+    
+        $cards.on('click', function() {
+            $(this).toggleClass('active');
+        });
+    
+        $menuItems.on('click', function() {
+            $menuItems.each(function() {
+                $(this).removeClass('active');
+            })
+            $(this).addClass('active');
+        });
+    });
+      </script>
 </head>
 <body>
     <div id="option">
@@ -117,6 +134,70 @@
                 });
               </script>
         </div>   
+    </div>
+    <div class="screen list-view">
+        <ul>
+            <li class="list-item">
+                <div class="regrade uppercase">Regrade</div>
+                <div class="card">
+                <div class="thumbnail"><img src="https://unsplash.it/200/200?random=#{random}"/>
+                </div>
+                <div class="details">
+                    <h2 class="name">Mick Chairo</h2>
+                    <p class="teacher">Theacher: Amir Mohammed</p>
+                    <p class="time-info">Due in 4 days</p>
+                </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="regrade uppercase">Regrade</div>
+                <div class="card active">
+                <div class="thumbnail"><img src="https://unsplash.it/200/200?random=#{random}"/>
+                </div>
+                <div class="details">
+                    <h2 class="name">Dom Diano</h2>
+                    <p class="teacher">Theacher: Amir Mohammed</p>
+                    <p class="time-info">Due in 4 days</p>
+                </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="regrade uppercase">Regrade</div>
+                <div class="card">
+                <div class="thumbnail"><img src="https://unsplash.it/200/200?random=#{random}"/>
+                </div>
+                <div class="details">
+                    <h2 class="name">Michele Rea</h2>
+                    <p class="teacher">Theacher: Amir Mohammed</p>
+                    <p class="time-info">Due in 4 days</p>
+                </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="regrade uppercase">Regrade</div>
+                <div class="card">
+                <div class="thumbnail"><img src="https://unsplash.it/200/200?random=#{random}"/>
+                </div>
+                <div class="details">
+                    <h2 class="name">Jan Roberto</h2>
+                    <p class="teacher">Theacher: Amir Mohammed</p>
+                    <p class="time-info">Due in 4 days</p>
+                </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="regrade uppercase">Regrade</div>
+                <div class="card">
+                <div class="thumbnail"><img src="https://unsplash.it/200/200?random=#{random}"/>
+                </div>
+                <div class="details">
+                    <h2 class="name">Reandra Loni</h2>
+                    <p class="teacher">Theacher: Amir Mohammed</p>
+                    <p class="time-info">Due in 4 days</p>
+                </div>
+                </div>
+            </li>
+        </ul>
     </div>
 </body>
 </html>
