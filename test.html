@@ -1,9 +1,33 @@
 <!DOCTYPE html>
 
-<head>
+<html>
+    <header>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>main</title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="./css/main.css"/>
 
-</head>
+        <style>
+            /* 스타일 초기화 */
+            * { margin: 0px ; padding: 0px ; }
+        </style>
+
+<script> 
+    $(document).ready(function() { $('h1.item').css('color', 'red'); 
+    $('.item1, .item2').css('color', 'blue'); 
+    $('.item.select').css('color', 'orange'); 
+    $('.item.cc').css('color', 'gray'); }); 
+</script> 
+    </header>
 
 <body>
-    <h1>TEST PAGE</h1>
+    <h1 class="item1">Header1</h1> 
+    <h1 class="item2">Header2</h1> 
+    <h1 class="item">Header</h1>
+    <h1 class="item">Header</h1>
+    <h1 class="item cc">Header</h1> 
+    <h1 class="item select">Header</h1>
 </body>

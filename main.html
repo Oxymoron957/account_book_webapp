@@ -11,50 +11,62 @@
         <link rel="stylesheet" href="./css/main.css"/>
 
         <style>
-            
-            div[data-role="header"] {padding-top: 1em; padding-bottom: 1em;}
-            div[data-role="PAGE"] {padding: 1em}
-            .right-box {text-align:right; padding-right: 1em;}
-            .center_align {text-align: center;}
-            .left_align {text-align: left;}
-
-            #cost_block {margin:1em 0em 1em 0em ; text-align:left ; height: 4em;}
-            #cost_details {padding:1em}
-            #add-page {height: 30em; margin-top: 5em;}
-            #cost-box {margin:1.5em;}
-            #memo-box {margin:1.5em; }
-            #category-box {margin:1.5em ; height: 15em;}
+            /* 스타일 초기화 */
+            * { margin: 0px ; padding: 0px ; }
         </style>
+
+        <script>
+            $(document).ready(function() { 
+            
+            $('.left_money_section').css('background-color', 'lightgray').children().css('background-color', 'lightgray');
+            $('.payment_history').css('padding-top','1.5em').children().css('height', '4em')
+
+            });
+        </script>
     </header>
 
     <body>
-        <div data-role="page" id = "page1">
-
-            <div data-role="header" class="ui-bar">
-                <div class ="right-box">
-                    <h3>0000년00월00일</h3>
-                </div>
-                <a data-role="button" href = "#menu_page">menu</a>
+        <!-- 메인 페이지 -->
+        <div data-role="page" id = "main_page">
+            <!-- 헤더 생성(위치 고정)-->
+            <div data-role="header" data-position="fixed" style="height: 4em;">
+                <!-- **날짜와 버튼을 중간으로 정렬해야함-->
+                <span>
+                    <h3 style="text-align:right;">Date_here</h3>
+                </span>
+                <a href="" id="menu_button">Menu_Button</a>
             </div>
 
-            <div data-role="content" class ="center_align">
-                <div data-role = content id="cost_block">
-                    <div class="ui-body ui-body-a">
-                        <h1>000,0000원 남음</h1>
-                    </div>
-                </div>
-                <div data-role="content">
-                    <div id="cost_details" class="ui-body ui-body-a">
-                        <h3>내역블록</h3>
-                    </div>
-                    <div id="cost_details" class="ui-body ui-body-a">
-                        <h3>내역블록</h3>
-                    </div>
-                    <div id="cost_details" class="ui-body ui-body-a">
-                        <h3>내역블록</h3>
-                    </div>
+            <!--잔액 확인 공간-->
+            <div data-role = content class="left_money_section" style="padding-bottom: 0em; padding-left: 0em;">
+                <div class="ui-body ui-body-a" style="border-style: none">
+                    <h1>100,000원 남음</h1>
                 </div>
             </div>
+
+            <!--지출 내역 확인 공간-->
+            <div data-role="content" class="payment_history">
+                <div id="cost_details" class="ui-body ui-body-a">
+                    
+                        <h3 style="float: left;">지출이름</h3>
+                        <h3 style="text-align: right; float: right;">지출날짜</h3>
+                    
+                    
+                        <h3 style="float: left;">지출이름</h3>
+                        <h3 style="text-align: right; float: right;">지출날짜</h3>
+                    
+                    
+                </div>
+                <br>
+                <div id="cost_details" class="ui-body ui-body-a">
+                    <h3>내역블록</h3>
+                </div>
+                <br>
+                <div id="cost_details" class="ui-body ui-body-a">
+                    <h3>내역블록</h3>
+                </div>
+            </div>
+           
 
             <div data-role="footer" data-position="fixed">
                 <div class="center_align">
@@ -64,8 +76,8 @@
 
         </div>
         
-        
-        <div data-role="dialog" id="add">
+        <!-- 지출 내역 추가하는 페이지 -->
+        <div data-role="dialog" id="add_page">
 
             <div data-role="content" id ="add-page">
                 <div id="cost-box">
@@ -86,7 +98,7 @@
 
         </div>
         
-        
+        <!-- 메뉴 페이지 -->
         <div data-role="page" id="menu_page">
             <h1>testing</h1>
             <div data-role="footer">
