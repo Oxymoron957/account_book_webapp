@@ -11,89 +11,148 @@
         <link rel="stylesheet" href="./css/main.css"/>
 
         <style>
-            
-            div[data-role="header"] {padding-top: 1em; padding-bottom: 1em;}
-            div[data-role="PAGE"] {padding: 1em}
-            .right-box {text-align:right; padding-right: 1em;}
-            .center_align {text-align: center;}
-            .left_align {text-align: left;}
+            /* 스타일 초기화 */
+            * { margin: 0px ; padding: 0px ; }
 
-            #cost_block {margin:1em 0em 1em 0em ; text-align:left ; height: 4em;}
-            #cost_details {padding:1em}
-            #add-page {height: 30em; margin-top: 5em;}
-            #cost-box {margin:1.5em;}
-            #memo-box {margin:1.5em; }
-            #category-box {margin:1.5em ; height: 15em;}
+            .menu_bg { width: 100%; height: 2000px; position: fixed; top:0px; left:0px; overflow: hidden; display: none; }
+            .menu { position:absolute; top:0px; left:0px; width:100%; height: 100%; background-color:#DDD; }
+            .menu > div { padding: 2%; }
         </style>
+
+        <script>
+
+            var giMenuDuration = 700;
+            var current_money = 100000;
+
+            var Now = new Date();
+            var NowTime = Now.getFullYear();
+            NowTime += '-' + eval(Now.getMonth() + 1) ;
+            NowTime += '-' + Now.getDate();
+            NowTime += ' ' + Now.getHours();
+            NowTime += ':' + Now.getMinutes();
+
+
+            // 전체 메뉴를 오른쪽으로 슬라이드하여서 보여준다.
+            function ShowMenu(){
+                $('.menu_bg' ).css( { 'display' : 'block' } );
+                $('.menu' ).css( { 'left' : '-100%' } );
+                $('.menu' ).animate( { left: '0px' }, { duration: giMenuDuration } );
+            }
+
+            // 전체 메뉴를 왼쪽으로 슬라이드하여서 닫는다.
+            function HideMenu(){
+                $('.menu' ).animate( { left: '-100%' }, { duration: giMenuDuration, complete:function(){ $('.menu_bg' ).css( { 'display' : 'none' } ); } } );
+            }
+
+            // 지출 내역을 추가한다. 
+            function Add_payment_history() {
+                var money_val = $("input[id=id_money]").val();
+                var memo_val = $("input[id=id_memo]").val();
+                $(".payment_history").append("<!-- 하나의 지출 카드 -->                <div id='cost_details' class='ui-body ui-body-a'>                    <div style='height: 2em;' id = 'test'> <h3 style='float: left;'>"+memo_val+"</h3> <h3 style='text-align: right; float: right;'>"+NowTime+"</h3> </div> <div style='height: 2em;padding-top: 0.5em;'> <h3 style='float: left;'>"+money_val+'원'+"</h3> <h3 style='text-align: right; float: right;'>카테고리</h3> </div> </div> <br>")
+                
+                // 금액 갱신
+                $("#cur_money").text(current_money-money_val)
+            };
+
+
+            // 페이지가 로드되기 전 실행되는 함수 
+            $(document).ready(function() { 
+            
+            // 메뉴 숨김
+            $('.menu_2' ).hide();
+            
+            // 잔액 부분 색상 설정
+            $('.left_money_section').css('background-color', 'lightgray').children().css('background-color', 'lightgray');
+            // 내역 부분 패딩+높이 설정
+            $('.payment_history').css('padding-top','1.5em').children().css('height', '4em')
+            
+            // 초기 금액 설정
+            $("#cur_money").text(current_money)
+            $("#date").text(NowTime)
+            
+
+            });
+        </script>
     </header>
 
     <body>
-        <div data-role="page" id = "page1">
-
-            <div data-role="header" class="ui-bar">
-                <div class ="right-box">
-                    <h3>0000년00월00일</h3>
-                </div>
-                <a data-role="button" href = "#menu_page">menu</a>
+        <!-- 메인 페이지 -->
+        <div data-role="page" id = "main_page">
+            <!-- 헤더 생성(위치 고정)-->
+            <div data-role="header" data-position="fixed" style="height: 4em;">
+                <!-- **날짜와 버튼을 중간으로 정렬해야함-->
+                <span>
+                    <h3 id="date" style="text-align:right;">Date_here</h3>
+                </span>
+                <a href="" id="menu_button" onclick="ShowMenu()">Menu_Button</a>
             </div>
 
-            <div data-role="content" class ="center_align">
-                <div data-role = content id="cost_block">
-                    <div class="ui-body ui-body-a">
-                        <h1>000,0000원 남음</h1>
-                    </div>
-                </div>
-                <div data-role="content">
-                    <div id="cost_details" class="ui-body ui-body-a">
-                        <h3>내역블록</h3>
-                    </div>
-                    <div id="cost_details" class="ui-body ui-body-a">
-                        <h3>내역블록</h3>
-                    </div>
-                    <div id="cost_details" class="ui-body ui-body-a">
-                        <h3>내역블록</h3>
-                    </div>
+            <!--잔액 확인 공간-->
+            <div data-role = content class="left_money_section" style="padding-top : 3em ; padding-bottom: 0em; padding-left: 0em;">
+                <div class="ui-body ui-body-a" style="border-style: none">
+                    <h1 id = "cur_money">100,000원 남음</h1>
                 </div>
             </div>
 
-            <div data-role="footer" data-position="fixed">
-                <div class="center_align">
-                    <a data-role="button" href = "#add">+</a>
+            <!--지출 내역 확인 공간-->
+            <div data-role="content" class="payment_history">
+                <!-- 하나의 지출 카드 -->
+                <div id="cost_details" class="ui-body ui-body-a">
+                    <div style="height: 2em;" id = "test">
+                        <h3 style="float: left;">지출이름</h3>
+                        <h3 style="text-align: right; float: right;">지출날짜</h3>
+                    </div>
+                    <div style="height: 2em;padding-top: 0.5em;">
+                        <h3 style="float: left;">결제금액</h3>
+                        <h3 style="text-align: right; float: right;">카테고리</h3>
+                    </div>
+                </div>
+                <br>
+            </div>
+           
+            <!-- 푸터바 공간 생성 -->
+            <div data-role="footer" data-position="fixed" style="height: 5em; text-align: center;">
+                <!-- 하단 추가하는 버튼 생성 -->
+                <div  style="padding-top: 1em;">
+                    <a data-role="button" href = "#add_page">+</a>
                 </div>
             </div>
 
         </div>
         
-        
-        <div data-role="dialog" id="add">
-
+        <!-- 지출 내역 추가하는 페이지 -->
+        <div data-role="dialog" id="add_page" style="padding-top: 3em;">
             <div data-role="content" id ="add-page">
-                <div id="cost-box">
-                    <h1>가격 적는 박스</h1>
-                </div>
-                <div id="memo-box">
-                    <h1>메모 적는 박스</h1>
-                </div>
-                <div id="category-box">
-                    <h1>카테고리 고르는 박스</h1>
+                <!-- 금액 적는 부분 -->
+                <div data-role="fieldcontain">
+                    <label for="name">금액</label>
+                    <input type="number" name="name_money" id="id_money" value=""/>
+                </div>  
+                <!-- 지출 메모 적는 부분 --> 
+                <div data-role="fieldcontain">
+                    <label for="name">지출메모</label>
+                    <input type="text" name="name_memo" id="id_memo" value=""  />
+                </div> 
+                <!-- 카테고리 고르는 박스 -->
+                <div id="category-box" style="height: 14em;">
+                    <h4>카테고리 고르는 박스</h4>
                 </div>
                 
                 <div>
-                    <a href="#" data-role="button" data-rel="back" >추가</a>
+                    <a href="#" data-role="button" data-rel="back" onclick="Add_payment_history()">추가</a>
                 </div>
-                
-            </div>
-
-        </div>
-        
-        
-        <div data-role="page" id="menu_page">
-            <h1>testing</h1>
-            <div data-role="footer">
-                <a href="#" data-role="button" data-rel="back" >추가</a>
             </div>
         </div>
-
+        
+        <!-- 메뉴 페이지 -->
+        <div class="menu_bg" >
+            <div class="menu" style="padding-top: 5em;">
+                <div style="width: 96%; text-align: right" onclick="HideMenu()">닫기</div>
+                <div>Home</div>
+                <div>통계</div>
+                <div>설정</div>
+            </div>
+        </div>
     </body>
 
 </html>
