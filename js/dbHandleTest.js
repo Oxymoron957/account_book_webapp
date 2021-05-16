@@ -77,12 +77,92 @@ function deletePayment(){
 
     });
 }
-/*
-    그래프 상에서 -> 월별 수입, 지출 총합
-                 -> 수입 
-                 -> 지출
-                
-*/
+
+// 카테고리별 지출 내역
 function readCategoryPayment(category){
-    db.transaction
+    db.transaction(function(tr){
+        var selectSQL;
+        var year = $('#graphYear').val();
+        var month = $('#graphMonth').val();
+        if(category==='all')
+        {
+            selectSQL = 'select * from payment where year =? and month = ? order by day desc';
+            tr.excuteSql(selectSQL, [year,month], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                for(var i=0;i<rs.rows.length;i++)
+                {
+                    // rs.rows.item(i).id
+                    // rs.rows.item(i).name
+                    // rs.rows.item(i).category
+                    // rs.rows.item(i).day
+                    // rs.rows.item(i).amount
+                }
+            });
+        }
+        else
+        {
+            selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
+            tr.excuteSql(selectSQL, [year,month,category], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                for(var i=0;i<rs.rows.length;i++)
+                {
+                    // rs.rows.item(i).id
+                    // rs.rows.item(i).name
+                    // rs.rows.item(i).category
+                    // rs.rows.item(i).day
+                    // rs.rows.item(i).amount
+                }
+            });
+        }
+    });
+}
+
+// 카테고리별,월별 지출 총액
+function readCategoryPaymentAmountSum_present(category){
+    db.transaction(function(tr){
+        var selectSQL;
+        var year = $('#graphYear').val();
+        var month = $('#graphMonth').val();
+        if(category==='all')
+        {
+            selectSQL = 'select sum(amount) from payment where year =? and month = ?';
+            tr.excuteSql(selectSQL, [year,month], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                // 현재 월 지출 총액
+                // rs.rows.item(0)['sum(amount)']
+            });
+        }
+        else
+        {
+            selectSQL = 'select sum(amount) from payment where year =? and month = ? and category = ?';
+            tr.excuteSql(selectSQL, [year,month,category], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                // 현재 월 지출 총액
+                // rs.rows.item(0)['sum(amount)']
+            });
+        }   
+    });
+}
+
+function readCategoryPaymentAmountSum_All(category){
+    db.transaction(function(tr){
+        var selectSQL;
+        var year = new Date().getFullYear();    
+        if(category==='all')
+        {
+            selectSQL = 'select sum(amount) from payment where year = ? group by month' ;
+            tr.excuteSql(selectSQL, [year], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                // 그래프에 값들 표시
+            });
+        }
+        else
+        {
+            selectSQL = 'select sum(amount) from payment where year =? and category = ? group by month';
+            tr.excuteSql(selectSQL, [year, category], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                // 그래프에 값들 표시
+            });
+        }
+    });
 }
