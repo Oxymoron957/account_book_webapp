@@ -11,7 +11,7 @@ var chart = new Chart(ctx, {
         label: 'My First dataset',
         backgroundColor: 'transparent',
         borderColor: 'red',
-        data: [0, 10, 5, 2, 20, 30, 45]
+        data: [100000, 10, 5, 2, 20, 30, 45]
     }]
     },
     // 옵션
