@@ -78,7 +78,7 @@ function deletePayment(){
     });
 }
 
-// 카테고리별 지출 내역
+// 카테고리별 지출 내역 (선택 연도,월에 지출내역 표시 -> 각각 반복문에서 카드를 만들고 값 표시)
 function readCategoryPayment(category){
     db.transaction(function(tr){
         var selectSQL;
@@ -117,7 +117,7 @@ function readCategoryPayment(category){
     });
 }
 
-// 카테고리별,월별 지출 총액
+// 선택한 연도,월에 ex) 2021 5월의 지출 총액 조회(원형 그래프에서 1. 전체지출)
 function readCategoryPaymentAmountSum_present(category){
     db.transaction(function(tr){
         var selectSQL;
@@ -144,6 +144,7 @@ function readCategoryPaymentAmountSum_present(category){
     });
 }
 
+// 현재 연도에 월별 지출액 (선형 그래프에서 표시)
 function readCategoryPaymentAmountSum_All(category){
     db.transaction(function(tr){
         var selectSQL;
@@ -154,6 +155,7 @@ function readCategoryPaymentAmountSum_All(category){
             tr.excuteSql(selectSQL, [year], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
                 // 그래프에 값들 표시
+                // fillChart(d1,d2,d3~~d12);
             });
         }
         else
@@ -162,7 +164,19 @@ function readCategoryPaymentAmountSum_All(category){
             tr.excuteSql(selectSQL, [year, category], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
                 // 그래프에 값들 표시
+                // fillChart(d1~d12);
             });
         }
     });
 }
+
+// 현 연도,월 -> 카테고리별 지출액 -> 내가 소비한 카테고리
+function readAllCategoryPaymentAmountSum() {
+
+}
+
+// 수입 테이블 create
+
+
+// 수입 테이블 관리 (insert, update, select)
+// 초기예산+ 각 수입
