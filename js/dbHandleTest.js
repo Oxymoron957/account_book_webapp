@@ -193,8 +193,14 @@ function readAllCategoryPaymentAmountSum() {
 // 최근 발생한 5개의 지출 
 function recentPayments() {
     db.transaction(function(tr){
+        var num_of_Payments = 0
+        selectSQL = 'select count(*) from payment';
+        tr.executeSql(selectSQL, [], function(tr,rs){
+            
+        });
+
+
         var selectSQL;
-        
         selectSQL = 'select * from payment where id = 1';
         tr.executeSql(selectSQL, [], function(tr,rs){
             console.log('지출 내역 조회' + rs.rows.length+'건');
