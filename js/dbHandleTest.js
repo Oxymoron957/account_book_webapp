@@ -44,7 +44,7 @@ function insertPayment(){
         var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
         
         tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
-            console.log('no: ' + rs.insertId);
+            console.log('지출 저장완료 no: ' + rs.insertId);
         }, function(tr,err){
             console.log('DB오류'+err.message+err.code);
             }
@@ -190,21 +190,33 @@ function readAllCategoryPaymentAmountSum() {
 
 }
 
-// 최근 발생한 5개의 지출 
+// 최근 발생한 3개의 지출 
 function recentPayments() {
     db.transaction(function(tr){
-        var num_of_Payments = 0
-        selectSQL = 'select count(*) from payment';
-        tr.executeSql(selectSQL, [], function(tr,rs){
-            
-        });
-
-
         var selectSQL;
-        selectSQL = 'select * from payment where id = 1';
+        selectSQL = 'select * from payment order by id desc';
         tr.executeSql(selectSQL, [], function(tr,rs){
-            console.log('지출 내역 조회' + rs.rows.length+'건');
-            console.log()
+            console.log("최근 내역을 불러왔습니다.")
+            // 가장 최근 내역 카드 수정
+            console.log(rs.rows.item(0).id)
+            $('#paymentBoxName-0').text(rs.rows.item(0).name)
+            $('#paymentBoxDate-0').text(rs.rows.item(0).year+"_"+rs.rows.item(0).month+"_"+rs.rows.item(0).day)
+            $('#paymentBoxAmount-0').text(rs.rows.item(0).amount)
+            $('#paymentBoxCategory-0').text(rs.rows.item(0).category)
+
+            console.log(rs.rows.item(1).id)
+            $('#paymentBoxName-1').text(rs.rows.item(1).name)
+            $('#paymentBoxDate-1').text(rs.rows.item(1).year+"_"+rs.rows.item(1).month+"_"+rs.rows.item(1).day)
+            $('#paymentBoxAmount-1').text(rs.rows.item(1).amount)
+            $('#paymentBoxCategory-1').text(rs.rows.item(1).category)
+
+            console.log(rs.rows.item(2).id)
+            $('#paymentBoxName-2').text(rs.rows.item(2).name)
+            $('#paymentBoxDate-2').text(rs.rows.item(2).year+"_"+rs.rows.item(2).month+"_"+rs.rows.item(2).day)
+            $('#paymentBoxAmount-2').text(rs.rows.item(2).amount)
+            $('#paymentBoxCategory-2').text(rs.rows.item(2).category)
+
+            
         });
         
     });

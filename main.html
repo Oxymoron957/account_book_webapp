@@ -24,10 +24,13 @@
             openDB();  
 		    createTable();   
 
-
+            // menu 나오는 시간 설정
             var giMenuDuration = 700;
+            
+            // 초기 금액 설정
             var current_money = 100000;
 
+            // 현재 날짜 
             var Now = new Date();
             var NowTime = Now.getFullYear();
             NowTime += '-' + eval(Now.getMonth() + 1) ;
@@ -48,15 +51,19 @@
                 $('.menu' ).animate( { left: '-100%' }, { duration: giMenuDuration, complete:function(){ $('.menu_bg' ).css( { 'display' : 'none' } ); } } );
             }
 
+            /*
             // 지출 내역을 추가한다. 
             function Add_payment_history() {
                 var money_val = $("input[id=PaymentAmount]").val();
                 var memo_val = $("input[id=PaymentName]").val();
-                $(".payment_history").append("<!-- 하나의 지출 카드 -->                <div id='cost_details' class='ui-body ui-body-a'>                    <div style='height: 2em;' id = 'test'> <h3 style='float: left;'>"+memo_val+"</h3> <h3 style='text-align: right; float: right;'>"+NowTime+"</h3> </div> <div style='height: 2em;padding-top: 0.5em;'> <h3 style='float: left;'>"+money_val+'원'+"</h3> <h3 style='text-align: right; float: right;'>카테고리</h3> </div> </div> <br>")
+                
+                $(".payment_history")
+                .before("<div id='cost_details' class='ui-body ui-body-a'> <div style='height: 2em;' id = 'test'> <h3 style='float: left;'>"+memo_val+"</h3> <h3 style='text-align: right; float: right;'>"+NowTime+"</h3> </div> <div style='height: 2em;padding-top: 0.5em;'> <h3 style='float: left;'>"+money_val+'원'+"</h3> <h3 style='text-align: right; float: right;'>카테고리</h3> </div> </div> <br>")
                 
                 // 금액 갱신
                 $("#cur_money").text(current_money-money_val)
             };
+            */
 
 
             // 페이지가 로드되기 전 실행되는 함수 
@@ -74,9 +81,14 @@
             $("#cur_money").text(current_money)
             $("#date").text(NowTime)
             
+            // 걸재 내역을 DB에서 가져온다. 
+            recentPayments();
             // 결재 내역을 DB에 추가합니다.
             $('#submit1').click( function() {
+                // DB에 결재 내역을 추가한다.
                 insertPayment();
+
+                // 최근 결재 내역을 가져와서 카드형식으로 
                 recentPayments();
 		        });
 
@@ -108,19 +120,46 @@
                 <!-- 하나의 지출 카드 -->
                 <div id="cost_details" class="ui-body ui-body-a">
                     <div style="height: 2em;" id = "test">
-                        <h3 style="float: left;">지출이름</h3>
-                        <h3 style="text-align: right; float: right;">지출날짜</h3>
+                        <h3 style="float: left;" id = "paymentBoxName-0">지출이름</h3>
+                        <h3 style="text-align: right; float: right;" id = "paymentBoxDate-0">지출날짜</h3>
                     </div>
                     <div style="height: 2em;padding-top: 0.5em;">
-                        <h3 style="float: left;">결제금액</h3>
-                        <h3 style="text-align: right; float: right;">카테고리</h3>
+                        <h3 style="float: left;" id = "paymentBoxAmount-0">결제금액</h3>
+                        <h3 style="text-align: right; float: right;" id = "paymentBoxCategory-0">카테고리</h3>
                     </div>
                 </div>
                 <br>
+
+                <!-- 하나의 지출 카드 -->
+                <div id="cost_details" class="ui-body ui-body-a">
+                    <div style="height: 2em;" id = "test">
+                        <h3 style="float: left;" id = "paymentBoxName-1">지출이름</h3>
+                        <h3 style="text-align: right; float: right;" id = "paymentBoxDate-1">지출날짜</h3>
+                    </div>
+                    <div style="height: 2em;padding-top: 0.5em;">
+                        <h3 style="float: left;" id = "paymentBoxAmount-1">결제금액</h3>
+                        <h3 style="text-align: right; float: right;" id = "paymentBoxCategory-1">카테고리</h3>
+                    </div>
+                </div>
+                <br>
+
+                <!-- 하나의 지출 카드 -->
+                <div id="cost_details" class="ui-body ui-body-a">
+                    <div style="height: 2em;" id = "test">
+                        <h3 style="float: left;" id = "paymentBoxName-2">지출이름</h3>
+                        <h3 style="text-align: right; float: right;" id = "paymentBoxDate-2">지출날짜</h3>
+                    </div>
+                    <div style="height: 2em;padding-top: 0.5em;">
+                        <h3 style="float: left;" id = "paymentBoxAmount-2">결제금액</h3>
+                        <h3 style="text-align: right; float: right;" id = "paymentBoxCategory-2">카테고리</h3>
+                    </div>
+                </div>
+                <br>
+                
             </div>
            
             <!-- 푸터바 공간 생성 -->
-            <div data-role="footer" data-position="fixed" style="height: 5em; text-align: center;">
+            <div data-role="footer" data-position="fixed" style="height: 3.5em; text-align: center;">
                 <!-- 하단 추가하는 버튼 생성 -->
                 <div  style="padding-top: 1em;">
                     <a data-role="button" href = "#add_page" >+</a>
@@ -148,7 +187,8 @@
                 </div>
                 
                 <div>
-                    <a href="#" data-role="button" data-rel="back" onclick="Add_payment_history()" id = "submit1">추가</a>
+                    <a href="#" data-role="button" data-rel="back" id = "submit1">추가</a>
+                    <a href="#" data-role="button" data-rel="back">Back</a>
                 </div>
             </div>
         </div>
@@ -157,9 +197,9 @@
         <div class="menu_bg" >
             <div class="menu" style="padding-top: 5em;">
                 <div style="width: 96%; text-align: right" onclick="HideMenu()">닫기</div>
-                <div>Home</div>
-                <div>통계</div>
-                <div>설정</div>
+                <div onclick="location.href='main.html';">Home</div>
+                <div onclick="location.href='graph.html';">통계</div>
+                <div onclick="location.href='settings.html';">설정</div>
             </div>
         </div>
     </body>
