@@ -33,9 +33,12 @@ function createTable()  {
 
 function createTable() {
     db.transaction(function(tr){
+    // var deleteSQL = 'drop table payment';
     var createSQL = 'create table if not exists payment(id integer primary key autoincrement ,name text, category text, year integer, month integer, day integer, amount integer)';      
+    // tr.executeSql(deleteSQL);
+    
     tr.executeSql(createSQL, [], function(){
-        console.log('2_1_테이블생성_sql 실행 성공...');       
+        console.log('2_1_테이블생성_sql 실행 성공...!!!!!!');       
      }, function(){
         console.log('2_1_테이블생성_sql 실행 실패...');           
      });
@@ -64,13 +67,18 @@ function insertPayment(){
         var amount = $('#id_money').val();
         var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
         
-        tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
-            console.log('no: ' + rs.insertId);
-        }, function(tr,err){
-            console.log('DB오류'+err.message+err.code);
-            }
-        );
-        
+        if(name!=''&&category!=''&&amount!=''){
+            tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
+                console.log('no: ' + rs.insertId);
+            }, function(tr,err){
+                console.log('DB오류'+err.message+err.code);
+                }
+            );
+        }
+        else
+        {
+            console.log('입력을 해주세요');
+        }
     });
 }
 

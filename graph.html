@@ -23,7 +23,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/foundation/5.5.0/css/foundation.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
+    <script type="text/javascript" src="js/graph.js"></script>
     <link rel="stylesheet" type="text/css" href="css/graphOption.css">
     <link rel="stylesheet" type="text/css" href="css/graphList.css">
     <title>Graph</title>
@@ -102,6 +102,22 @@
             cc
             <script>
                 var ctx = document.getElementById('myChart').getContext('2d');
+
+                var label1='1';
+                var label2='2';
+                var label3='3';
+                var label4='4';
+                var label5='5';
+                var label6='6';
+                var label7='7';
+                var label8='8';
+                var label9='9';
+                var label10='10';
+                var label11='11';
+                var label12='12';
+
+                var data1 = 
+
                 var chart = new Chart(ctx, {
                   // 챠트 종류를 선택
                   type: 'line',
@@ -109,13 +125,13 @@
                 
                   // 챠트를 그릴 데이타
                   data: {
-                    labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월','8월','9월','10월','11월','12월'],
+                    labels: [label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12],
                     datasets: [{
                       label: '월별 소비액',
                       backgroundColor: 'transparent',
                     //   backgroundColor: 'black',
                       borderColor: 'blue',
-                      data: [110, 130, 59, 23, 520, 30, 145,55,22,333,555,33]
+                      data: [data1,data2,data3,data4,data5,data6,data7,data8,data9,data10,data11,data12]
                     }]
                   },
                   // 옵션
