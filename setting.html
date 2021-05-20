@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>제이쿼리</title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+          $('#saveBu').click(function(){
+            var budget=$('#budgetInput').val();
+          });
+
+          $('#saveCat').click(function(){
+            var Name=$('#catName').val();
+            var Color=$('#catColor').val();
+            $("<span>"+Name+"</span>").appendTo('#dot-wrap');
+          });
+        });
+
+        var code2="0000";
+        var code;
+
+        function check_Pass() {
+        if (document.number.number1.value.length==1) {
+          console.log("ddd");
+          document.number.number2.focus();
+          if (document.number.number2.value.length==1){
+            document.number.number3.focus();
+            if (document.number.number3.value.length==1){
+              document.number.number4.focus();
+              if(document.number.number4.value.length==1){
+                code=document.number.number1.value + document.number.number2.value + document.number.number3.value + document.number.number4.value;
+                if(code==code2){
+                  alert("암호가 일치합니다.");
+                  $('#number1').val('');
+                  $('#number2').val('');
+                  $('#number3').val('');
+                  $('#number4').val('');
+                  location.href="#password2";
+                }
+                else{
+                  alert("암호가 일치하지 않습니다.");
+                  $('#number1').val('');
+                  $('#number2').val('');
+                  $('#number3').val('');
+                  $('#number4').val('');
+                  location.href="#main";
+                }
+              }
+            }
+          }
+        }
+        return;
+      }
+
+      function change_Pass() {
+        if (document.number2.number5.value.length==1) {
+          document.number2.number6.focus();
+          if (document.number2.number6.value.length==1){
+            document.number2.number7.focus();
+            if (document.number2.number7.value.length==1){
+              document.number2.number8.focus();
+              if(document.number2.number8.value.length==1){
+                code2=document.number2.number5.value + document.number2.number6.value + document.number2.number7.value + document.number2.number8.value;
+                  alert("변경된 암호는 <"+code2+"> 입니다!");
+                  $('#number5').val('');
+                  $('#number6').val('');
+                  $('#number7').val('');
+                  $('#number8').val('');
+                  location.href="#main";
+                }
+              }
+            }
+          }
+        return;
+      }
+
+
+      </script>
+
+    <style>
+      .dot-wrap{
+        width:360px;
+        margin:0 auto;
+      }
+      .circle1{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#eec4c4;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle2{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#94d0cc;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle3{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#d1d9d9;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle4{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#ff4a4a;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle5{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#f7ea00;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle6{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#81b214;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle7{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#9f6ff8;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle8{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#edffa9;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+      .circle9{
+        width:70px;
+        height:70px;
+        align-items: center;
+        border-radius:50%;
+        background:#ffcc29;
+        font-size:17px;
+        font-weight:"bold";
+        text-align:center;
+        line-height:200px;
+        float:left;
+        margin-top: 50px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-bottom:30px;
+      }
+
+    </style>
+  </head>  
+
+
+  <body>
+    <div data-role="page" id="main">
+      <div data-role="header" data-postion="fixed" style="background-color:rgb(211, 214, 247)">
+        <h1 style="font-size:22px">설 정</h1>
+        <a href="#menu" data-role="button" data-icon="bars" data-iconpos="notext" style="margin-top: 10px;"></a>
+      </div>
+      
+      <ul data-role="listview" data-inset="true">
+        <li><a href="#budget" data-transition="slide" style="font-size:20px">예산 설정</a></li>
+        <li><a href="#auto" style="font-size:20px">자동 입/출금 관리</a></li>
+        <li><a href="#category" style="font-size:20px">카테고리 관리</a></li>
+        <li><a href="#password" style="font-size:20px">암호 설정</a></li>
+        <li><a href="#reset" style="font-size:20px">초기화</a></li>
+      </ul>       
+
+    </div>
+
+
+    <div data-role="page" id="budget" style="background-color:rgb(211, 214, 247)">
+      <p style="margin-left:16px; margin-top: 110px;font-size:30px;"><b>당신의 예산은...</b></p>
+
+      <div data-role="content">
+        <fieldset>
+          <table>
+            <tr>
+              <td><label for="budgetInput"style="font-size:20px;">월 </label></td>
+              <td><input type="number" name="budgetInput" id="budgetInput" placeholder="예산 입력"></td>
+              <td><label for="budgetInput"style="font-size:20px;">원</label></td>
+              <td><a href="#main" data-role="button" id="saveBu" data-inline="true" >저 장</a></td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+
+   </div>
+
+
+
+  <div data-role="page" id="auto">
+    <div data-role="header"data-position="fixed">
+      <a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" style="margin-top: 10px;"></a>
+      <h1 style="font-size:19px">자동 입/출금 관리</h1>
+      <a href="#addAuto" data-role="button" data-transition="slidedown" data-icon="plus" data-iconpos="notext" style="margin-top: 10px;"></a>
+    </div>
+  </div>
+
+  <div data-role="page" id="addAuto">
+    <div data-role="header">
+      <h1>자동 입/출금</h1>
+    </div>
+
+      <div data-role="content">
+        <fieldset>
+          <table>
+            <tr>
+              <td>          
+                <select name="select" id="select" data-inline="true">
+                  <option value="deposit">입금</option>
+                  <option value="withdraw">출금</option>
+                </select>
+              </td>
+              <td>           
+                <select name="select2" id="select2" data-inline="true">
+                  <option value="food">식비</option>
+                  <option value="cafe">카페/간식</option>
+                  <option value="drink">술/유흥</option>
+                  <option value="life">생활</option>
+                  <option value="trans">교통</option>
+                  <option value="living">주거</option>
+                  <option value="med">의료</option>
+                  <option value="cult">문화/여가</option>
+                  <option value="trav">여행/숙박</option>
+                </select>
+              </td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <td style="width:300px;"><input type="number" name="inputAuto" id="inputAuto" style="font-size:22x;" placeholder="금액 입력"></td>
+              <td><label for="budgetInput"style="font-size:25px;">원</label></td>
+            </tr>
+          </table>
+
+        </fieldset>
+        <a href="#auto" data-role="button" id="saveCat" data-transition="slideup">저장</a>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+  <div data-role="page" id="category">
+    <div data-role="header"data-position="fixed">
+      <a href="#main" data-role="button" data-icon="back"  data-iconpos="notext" style="margin-top: 10px;"></a>
+      <a href="#addCat" data-role="button" data-transition="slidedown" data-icon="plus" data-iconpos="notext" style="margin-top: 10px;"></a>
+      <h1 style="font-size:19px">카테고리 관리</h1>
+    </div>
+    <div data-role="content">
+      <div class="dot-wrap" id="dot-wrap">
+        <span class="circle1">식비</span>
+        <span class="circle2">카페/간식</span>
+        <span class="circle3">술/유흥</span>
+        <span class="circle4">생활</span>
+        <span class="circle5">교통</span>
+        <span class="circle6">주거</span>
+        <span class="circle7">의료</span>
+        <span class="circle8">문화/여가</span>
+        <span class="circle9">여행/숙박</span>>
+      </div>
+    </div>
+
+
+    
+    <canvas id="myCanvas" width="1000" height="1000">
+    </canvas>
+
+  
+    <script>
+
+
+
+      /*
+      window.onload=function(){
+        var cnvs=document.getElementById("myCanvas");
+        if(cnvs.getContext){
+          var ctx=cnvs.getContext('2d');
+          ctx.beginPath();
+          ctx.arc(70,110,30,0,2*Math.PI);
+          ctx.stroke();
+          ctx.fillStyle="#eec4c4";
+          ctx.fill;
+        }
+        else alert('canvas 지원 안함');
+      }*/
+    </script>
+  </div>
+
+  <div data-role="page" id="addCat">
+    <div data-role="header">
+      <h1>카테고리 추가</h1>
+    </div>
+    <div data-role="content">
+      
+      <fieldset>
+        <table>
+          <tr>
+            <td><label for="catName"style="font-size:19px;">카테고리 :  </label></td>
+            <td><input type="text" name="catName" id="catName" placeholder="이름"></td>
+          
+            <td><input type="color" name="catColor" id="catColor"></td>
+          </tr>
+        </table>
+      </fieldset>
+
+      <a href="#category" data-role="button" id="saveCat" data-transition="slideup">저장</a>
+    </div>
+  </div>
+
+
+
+
+
+  
+  <div data-role="page" id="password" style="background-color:rgb(211, 214, 247)" >
+    <form method=post name=number>
+      <p>일단 초기 암호를 0000으로 했습니다</p>
+      <p style="text-align: center; margin-top:70px;font-size:30px;"><b>암 호 입 력</b></p>
+      <table>
+        <tr>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number1" name=number1 onkeyup='check_Pass()' autofocus></td>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number2" name=number2 onkeyup='check_Pass()'></td>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number3" name=number3 onkeyup='check_Pass()'></td>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number4" name=number4 onkeyup='check_Pass()'></td>
+        </tr>
+      </table>
+      </form>
+    </div>
+
+    <div data-role="page" id="password2" style="background-color:#dddddd;">
+      <form method=post name=number2>
+      <p>변경한 다음에는 입력한 암호로 확인받으면 됩니다</p>
+      <p style="text-align: center; margin-top:70px;font-size:30px;"><b>암 호 입 력</b></p>
+        <table>
+          <tr>
+            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number5" name=number5 onkeyup='change_Pass()' autofocus></td>
+            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number6" name=number6 onkeyup='change_Pass()'></td>
+            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number7" name=number7 onkeyup='change_Pass()'></td>
+            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number8" name=number8 onkeyup='change_Pass()'></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+
+
+    <div data-role="dialog" id="warning">
+      <div data-role="header" data-postion="fixed">
+        <h1>초기화 경고</h1>
+        <div data-role="content"></div>
+          <p>전체 초기화를 진행하면 데이터를 복구할 수 없습니다. </br>
+            정말로 삭제하시겠습니까? 왜 안뜨지..? </p>
+          <a href="#main" data-role="button">네</a>
+          <a href="#main" data-role="button">아니오</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

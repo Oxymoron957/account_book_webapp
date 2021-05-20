@@ -11,58 +11,64 @@
   }
   
   .list-view .list-item {
-    background-color: #FD7F72;
+    background-color: #ffffff;
     color: white;
     position: relative;
   }
-  .list-view .list-item .regrade {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    line-height: 86px;
-    padding-left: 1.5rem;
-    cursor: pointer;
-  }
+  
   .list-view .list-item .card {
-    height: 86px;
-    position: relative;
+    height: 10%;
     background-color: white;
-    color: #555;
     display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: box-shadow 0.5s ease, transform 0.5s ease, transform-origin 0.5s ease, z-index 0.5s ease;
+    color: rgb(161, 26, 48);
+    border-radius: 30px;
+    justify-content:flex-start;
+    flex-direction: row;
+    /* cursor: pointer;
+    transition: box-shadow 0.5s ease, transform 0.5s ease, transform-origin 0.5s ease, z-index 0.5s ease; */
   }
+  
   .list-view .list-item .card .thumbnail {
-    flex: 0 0 44px;
-    margin: 0 16px;
+    width: 30%;
+    text-align: center;
   }
+  
   .list-view .list-item .card .thumbnail img {
-    left: auto;
-    width: 20%;
-    border-radius: 999px;
+    margin: 5%;
+    width: 60%;
+    border-radius: 99px;
+    text-align: center;
   }
+
+  .list-view .list-item .card .thumbnail .tumbInfo {
+    font-size:12px;
+    top: 0%;
+    margin: 0%;
+    border: 0%;
+    
+  }
+  
   .list-view .list-item .card .details {
-    height: 44px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-grow: 2;
+    top: 0%;
+    margin: 0%;
+    border: 0%;
   }
   .list-view .list-item .card .details .name {
     font-size: 12px;
+    top: 0%;
+    margin: 0%;
+    border: 0%;
+    text-align: center;
   }
   .list-view .list-item .card .details > *:not(.name) {
-    opacity: 0.6;
+    /* opacity: 0.6; */
   }
-  .list-view .list-item .card:hover {
-    background-color: #f2f2f2;
-  }
-  .list-view .list-item .card.active {
-    z-index: 3;
-    transform: scale(1.2);
-    transform-origin: -180% 50%;
-    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+  
+  .list-view .list-item .card .details .money {
+    top: 0%;
+    margin: 0%;
+    border: 0%;
+    font-size: 50px;
+    text-align: center;
   }
