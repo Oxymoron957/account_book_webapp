@@ -62,7 +62,7 @@ function insertPayment(){
         var category = $('#id_category').val();
         var now = new Date();
         var year = now.getFullYear();
-        var month = now.getMonth();
+        var month = now.getMonth()+1;
         var day = now.getDate();
         var amount = $('#id_money').val();
         var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
@@ -190,28 +190,113 @@ function readCategoryPaymentAmountSum_present(category){
 
 // 현재 연도에 월별 지출액 (선형 그래프에서 표시)
 function readCategoryPaymentAmountSum_All(category){
+    var arr = [0,0,0,0,0,0,0,0,0,0,0,0];
+    var flag=0;
+    var label1='1';
+    var label2='2';
+    var label3='3';
+    var label4='4';
+    var label5='5';
+    var label6='6';
+    var label7='7';
+    var label8='8';
+    var label9='9';
+    var label10='10';
+    var label11='11';
+    var label12='12';
+    
     db.transaction(function(tr){
+        var ctx = document.getElementById('myChart').getContext('2d');
+
         var selectSQL;
-        var year = new Date().getFullYear();    
+        var year = new Date().getFullYear();
+        var retArr = new Array();
         if(category==='all')
         {
-            selectSQL = 'select sum(amount) from payment where year = ? group by month' ;
+            console.log('모두 조회');
+            selectSQL = 'select month,sum(amount) from payment where year = ? group by month' ;
             tr.executeSql(selectSQL, [year], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
-                // 그래프에 값들 표시
-                // fillChart(d1,d2,d3~~d12);
+                for(var i=0;i<rs.rows.length;i++)
+                {
+                    arr[rs.rows[i]['month']]=rs.rows[i]['sum(amount)']
+                }
+
+                var chart = new Chart(ctx, {
+                    // 챠트 종류를 선택
+                    type: 'line',
+                    data: {
+                        labels: [label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12],
+                        datasets: [{
+                        label: '월별 소비액',
+                        backgroundColor: 'transparent',
+                        //   backgroundColor: 'black',
+                        borderColor: 'blue',
+                        data: [arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11]]
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                            },
+                    }
+                    });
+
             });
         }
         else
         {
-            selectSQL = 'select sum(amount) from payment where year =? and category = ? group by month';
+            selectSQL = 'select month,sum(amount) from payment where year =? and category = ? group by month';
             tr.executeSql(selectSQL, [year, category], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
                 // 그래프에 값들 표시
                 // fillChart(d1~d12);
+                // var arr = [0,0,0,0,0,0,0,0,0,0,0,0];
+
+                for(var i=0;i<rs.rows.length;i++)
+                {
+                    arr[rs.rows[i]['month']]=rs.rows[i]['sum(amount)']
+                }
+                for(var i=0;i<rs.rows.length;i++)
+                {
+                    arr[rs.rows[i]['month']]=rs.rows[i]['sum(amount)']
+                }
+
+                var chart = new Chart(ctx, {
+                    // 챠트 종류를 선택
+                    type: 'line',
+                    data: {
+                        labels: [label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12],
+                        datasets: [{
+                        label: '월별 소비액',
+                        backgroundColor: 'transparent',
+                        //   backgroundColor: 'black',
+                        borderColor: 'blue',
+                        data: [arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11]]
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                            },
+                    }
+                    });
             });
         }
     });
+    return arr;
+
+    
 }
 
 // 현 연도,월 -> 카테고리별 지출액 -> 내가 소비한 카테고리
