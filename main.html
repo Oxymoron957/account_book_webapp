@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="js/dbHandleTest.js"></script>
         <link rel="stylesheet" href="./css/main.css"/>
 
         <style>
@@ -20,7 +21,12 @@
         </style>
 
         <script>
-
+            $(document).ready( function() {
+                openDB();
+                createTable();
+            });
+            // 추가 DB연결
+            
             var giMenuDuration = 700;
             var current_money = 100000;
 
@@ -48,6 +54,7 @@
             function Add_payment_history() {
                 var money_val = $("input[id=id_money]").val();
                 var memo_val = $("input[id=id_memo]").val();
+                insertPayment();
                 $(".payment_history").append("<!-- 하나의 지출 카드 -->                <div id='cost_details' class='ui-body ui-body-a'>                    <div style='height: 2em;' id = 'test'> <h3 style='float: left;'>"+memo_val+"</h3> <h3 style='text-align: right; float: right;'>"+NowTime+"</h3> </div> <div style='height: 2em;padding-top: 0.5em;'> <h3 style='float: left;'>"+money_val+'원'+"</h3> <h3 style='text-align: right; float: right;'>카테고리</h3> </div> </div> <br>")
                 
                 // 금액 갱신
@@ -135,7 +142,8 @@
                 </div> 
                 <!-- 카테고리 고르는 박스 -->
                 <div id="category-box" style="height: 14em;">
-                    <h4>카테고리 고르는 박스</h4>
+                    <label for="name">카테고리</label>
+                    <input type="text" name="name_category" id="id_category" value=""  />
                 </div>
                 
                 <div>
