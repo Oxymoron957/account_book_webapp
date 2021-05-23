@@ -130,17 +130,51 @@ function readCategoryPayment(category){
         var month = $('#graphMonth').val();
         if(category==='all')
         {
-            selectSQL = 'select * from payment where year =? and month = ? order by day desc';
+            selectSQL = 'select payment.id, payment.name,payment.category,payment.day,payment.amount,category.color from payment join category on payment.category=category.name where payment.year =? and payment.month = ? order by payment.day desc';
             tr.executeSql(selectSQL, [year,month], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
+                document.write("\
+                        <div class=\"screen list-view\">\n\
+                                <ul class=\"list-ul\">");
+
                 for(var i=0;i<rs.rows.length;i++)
                 {
-                    // rs.rows.item(i).id
-                    // rs.rows.item(i).name
-                    // rs.rows.item(i).category
-                    // rs.rows.item(i).day
-                    // rs.rows.item(i).amount
+                    var paymentID = rs.rows.item(i).id;
+                    var paymentName = rs.rows.item(i).name;
+                    var paymentCategory = rs.rows.item(i).category;
+                    var paymentDay = rs.rows.item(i).day;
+                    var paymentAmount = rs.rows.item(i).amount;
+                    var categoryColor = rs.rows.item(i).color;
+
+                    document.write("\
+                        <li class=\"list-item\" data-id =\""
+                        +paymentID+
+                        "\">\n\
+                                    <div class=\"card\">\n\
+                                        <div class=\"thumbnail\">\n\
+                                            <div class=\"tumbImg\" style=\"background: "
+                                            + categoryColor +
+                                            ";\"></div>\n\
+                                            <div class=\"tumbInfo\">"
+                                                + paymentCategory +   
+                                            "</div>\n\
+                                        </div>\n\
+                                        <div class=\"details\">\n\
+                                            <div class=\"name\">"
+                                            + paymentName +
+                                            "</div>\n\
+                                            <div class=\"money\">"
+                                            + paymentAmount +
+                                            "</div>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                </li>");
+                    //반복해야할 것
+                    //////////////////
                 }
+                document.write("\
+                        </ul>\n\
+                            </div>");
             });
         }
         else
@@ -148,14 +182,48 @@ function readCategoryPayment(category){
             selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
             tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
+
+                document.write("\
+                        <div class=\"screen list-view\">\n\
+                                <ul class=\"list-ul\">");
+                                
                 for(var i=0;i<rs.rows.length;i++)
                 {
-                    // rs.rows.item(i).id
-                    // rs.rows.item(i).name
-                    // rs.rows.item(i).category
-                    // rs.rows.item(i).day
-                    // rs.rows.item(i).amount
+                    var paymentID = rs.rows.item(i).id;
+                    var paymentName = rs.rows.item(i).name;
+                    var paymentCategory = rs.rows.item(i).category;
+                    var paymentDay = rs.rows.item(i).day;
+                    var paymentAmount = rs.rows.item(i).amount;
+                    var categoryColor = rs.rows.item(i).color;
+
+                    document.write("\
+                        <li class=\"list-item\" data-id =\""
+                        +paymentID+
+                        "\">\n\
+                                    <div class=\"card\">\n\
+                                        <div class=\"thumbnail\">\n\
+                                            <div class=\"tumbImg\" style=\"background: "
+                                            + categoryColor +
+                                            ";\"></div>\n\
+                                            <div class=\"tumbInfo\">"
+                                                + paymentCategory +   
+                                            "</div>\n\
+                                        </div>\n\
+                                        <div class=\"details\">\n\
+                                            <div class=\"name\">"
+                                            + paymentName +
+                                            "</div>\n\
+                                            <div class=\"money\">"
+                                            + paymentAmount +
+                                            "</div>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                </li>");
+
                 }
+                document.write("\
+                        </ul>\n\
+                            </div>");
             });
         }
     });
@@ -301,6 +369,11 @@ function readCategoryPaymentAmountSum_All(category){
 
 // 현 연도,월 -> 카테고리별 지출액 -> 내가 소비한 카테고리
 function readAllCategoryPaymentAmountSum() {
+
+
+
+
+    
 
 }
 
