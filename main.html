@@ -1,3 +1,9 @@
+<!-- 
+    구현해야 하는 기능
+    1. 지출/수입 선택하는 기능 만들기
+    2. 카테고리 정보를 DB에서 불러와서 박스에 정렬하는 기능 만들기 
+    3. 
+-->
 <!DOCTYPE html>
 
 <html>
@@ -14,18 +20,32 @@
             /* 스타일 초기화 */
             * { margin: 0px ; padding: 0px ; }
 
+            /* 메뉴 부분 Style 설정 */
             .menu_bg { width: 100%; height: 2000px; position: fixed; top:0px; left:0px; overflow: hidden; display: none; }
             .menu { position:absolute; top:0px; left:0px; width:100%; height: 100%; background-color:#DDD; }
             .menu > div { padding: 2%; }
         </style>
+
+        <!-- 지출 DB 연결 -->
         <script src="./js/paymentDB.js"></script>
         <script>
-            // DB 연결
+            // DB 연결 및 Table 생성
             openDB();  
 		    createTable();   
 
+            // 메뉴 관련 변수 및 메서드 
             // menu 나오는 시간 설정
-            var giMenuDuration = 700;
+            var giMenuDuration = 300;
+            // 전체 메뉴를 오른쪽으로 슬라이드하여서 보여준다.
+            function ShowMenu(){
+                $('.menu_bg' ).css( { 'display' : 'block' } );
+                $('.menu' ).css( { 'left' : '-100%' } );
+                $('.menu' ).animate( { left: '0px' }, { duration: giMenuDuration } );
+            }
+            // 전체 메뉴를 왼쪽으로 슬라이드하여서 닫는다.
+            function HideMenu(){
+                $('.menu' ).animate( { left: '-100%' }, { duration: giMenuDuration, complete:function(){ $('.menu_bg' ).css( { 'display' : 'none' } ); } } );
+            }
             
             // 초기 금액 설정
             var current_money = 100000;
@@ -37,34 +57,6 @@
             NowTime += '-' + Now.getDate();
             NowTime += ' ' + Now.getHours();
             NowTime += ':' + Now.getMinutes();
-
-
-            // 전체 메뉴를 오른쪽으로 슬라이드하여서 보여준다.
-            function ShowMenu(){
-                $('.menu_bg' ).css( { 'display' : 'block' } );
-                $('.menu' ).css( { 'left' : '-100%' } );
-                $('.menu' ).animate( { left: '0px' }, { duration: giMenuDuration } );
-            }
-
-            // 전체 메뉴를 왼쪽으로 슬라이드하여서 닫는다.
-            function HideMenu(){
-                $('.menu' ).animate( { left: '-100%' }, { duration: giMenuDuration, complete:function(){ $('.menu_bg' ).css( { 'display' : 'none' } ); } } );
-            }
-
-            /*
-            // 지출 내역을 추가한다. 
-            function Add_payment_history() {
-                var money_val = $("input[id=PaymentAmount]").val();
-                var memo_val = $("input[id=PaymentName]").val();
-                
-                $(".payment_history")
-                .before("<div id='cost_details' class='ui-body ui-body-a'> <div style='height: 2em;' id = 'test'> <h3 style='float: left;'>"+memo_val+"</h3> <h3 style='text-align: right; float: right;'>"+NowTime+"</h3> </div> <div style='height: 2em;padding-top: 0.5em;'> <h3 style='float: left;'>"+money_val+'원'+"</h3> <h3 style='text-align: right; float: right;'>카테고리</h3> </div> </div> <br>")
-                
-                // 금액 갱신
-                $("#cur_money").text(current_money-money_val)
-            };
-            */
-
 
             // 페이지가 로드되기 전 실행되는 함수 
             $(document).ready(function() { 
@@ -83,15 +75,14 @@
             
             // 걸재 내역을 DB에서 가져온다. 
             recentPayments();
+
             // 결재 내역을 DB에 추가합니다.
             $('#submit1').click( function() {
                 // DB에 결재 내역을 추가한다.
                 insertPayment();
-
                 // 최근 결재 내역을 가져와서 카드형식으로 
                 recentPayments();
 		        });
-
             });
         </script>
     </header>
@@ -161,7 +152,7 @@
             <!-- 푸터바 공간 생성 -->
             <div data-role="footer" data-position="fixed" style="height: 3.5em; text-align: center;">
                 <!-- 하단 추가하는 버튼 생성 -->
-                <div  style="padding-top: 1em;">
+                <div  style="padding-top: 0.3em;">
                     <a data-role="button" href = "#add_page" >+</a>
                 </div>
             </div>
@@ -171,6 +162,17 @@
         <!-- 지출 내역 추가하는 페이지 -->
         <div data-role="dialog" id="add_page" style="padding-top: 3em;">
             <div data-role="content" id ="add-page">
+                <!-- 수입/지출 선책하는 부분-->
+                <div>
+                    <label class="slideBtn">
+
+                        <input type="checkbox">
+                      
+                        <span></span>
+                      
+                      </label>
+                                            
+                </div>
                 <!-- 금액 적는 부분 -->
                 <div data-role="fieldcontain">
                     <label for="name">금액</label>
@@ -194,7 +196,7 @@
         </div>
         
         <!-- 메뉴 페이지 -->
-        <div class="menu_bg" >
+        <div class="menu_bg" style="width: 10em;">
             <div class="menu" style="padding-top: 5em;">
                 <div style="width: 96%; text-align: right" onclick="HideMenu()">닫기</div>
                 <div onclick="location.href='main.html';">Home</div>
@@ -205,3 +207,5 @@
     </body>
 
 </html>
+
+
