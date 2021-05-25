@@ -1,9 +1,3 @@
-<!-- 
-    구현해야 하는 기능
-    1. 지출/수입 선택하는 기능 만들기
-    2. 카테고리 정보를 DB에서 불러와서 박스에 정렬하는 기능 만들기 
-    3. 
--->
 <!DOCTYPE html>
 
 <html>
@@ -28,12 +22,17 @@
 
         <!-- 지출 DB 연결 -->
         <script src="./js/paymentDB.js"></script>
+        <script src="./js/category.js"></script>
+        
         <script>
-            // DB 연결 및 Table 생성
-            openDB();  
+            // payment DB 연결 및 Table 생성
+            openDB_payment();  
 		    createTable();   
 
-            // 메뉴 관련 변수 및 메서드 
+            // category DB 연결 및 Table 생성
+            openDB_category();
+            createTableCat();
+             
             // menu 나오는 시간 설정
             var giMenuDuration = 300;
             // 전체 메뉴를 오른쪽으로 슬라이드하여서 보여준다.
@@ -46,11 +45,8 @@
             function HideMenu(){
                 $('.menu' ).animate( { left: '-100%' }, { duration: giMenuDuration, complete:function(){ $('.menu_bg' ).css( { 'display' : 'none' } ); } } );
             }
-            
-            // 초기 금액 설정
-            var current_money = 100000;
 
-            // 현재 날짜 
+            // 현재 날짜 저장
             var Now = new Date();
             var NowTime = Now.getFullYear();
             NowTime += '-' + eval(Now.getMonth() + 1) ;
@@ -60,94 +56,74 @@
 
             // 페이지가 로드되기 전 실행되는 함수 
             $(document).ready(function() { 
-            
-            // 메뉴 숨김
-            $('.menu_2' ).hide();
-            
-            // 잔액 부분 색상 설정
-            $('.left_money_section').css('background-color', 'lightgray').children().css('background-color', 'lightgray');
-            // 내역 부분 패딩+높이 설정
-            $('.payment_history').css('padding-top','1.5em').children().css('height', '4em')
-            
-            // 초기 금액 설정
-            $("#cur_money").text(current_money)
-            $("#date").text(NowTime)
-            
-            // 걸재 내역을 DB에서 가져온다. 
-            recentPayments();
-
-            // 결재 내역을 DB에 추가합니다.
-            $('#submit1').click( function() {
-                // DB에 결재 내역을 추가한다.
-                insertPayment();
-                // 최근 결재 내역을 가져와서 카드형식으로 
+                // 메뉴 숨김
+                $('.menu_2' ).hide();
+                
+                // 잔액 부분 색상 설정
+                $('.left_money_section').css('background-color', 'lightgray').children().css('background-color', 'lightgray');
+                // 내역 부분 패딩+높이 설정
+                $('.payment_history').css('padding-top','1.5em').children().css('height', '4em')
+                
+                // 초기 금액 & 날짜 설정
+                $("#date").text(NowTime)
+                get_cur_amount();
+                
+                // 결재 내역을 DB에서 가져온다. 
                 recentPayments();
-		        });
+
+                // 결재 내역을 DB에 추가하는 함수
+                $('#submit1').click( function() {
+                    // DB에 결재 내역을 추가한다.
+                    insertPayment();
+                    // 최근 결재 내역을 가져와서 카드형식으로 
+                    recentPayments();
+                    // 잔액을 표시
+                    get_cur_amount();
+                    });
+
+                // 현제 카테고리 정보를 가져와 추가한다.
+                createCatIcon_main();
+
+                // 선택한 카테고리 정보를 저장한다.
+                $(document).on("click",".cat",function(){
+                category_val = $(this).attr("id");
+                })
+
+                // 삭제 버튼 
+                $(document).on("click","#del_button",function(){
+                id_val = $(this).attr("value");
+                deletePayment(id_val);
+                // 최근 결재 내역을 다시 가져오고 잔액을 다시 표시한다.
+                recentPayments();
+                get_cur_amount();
+                })
             });
+
+            
         </script>
     </header>
 
     <body>
         <!-- 메인 페이지 -->
-        <div data-role="page" id = "main_page">
+        <div data-role="page" id = "main_page" >
             <!-- 헤더 생성(위치 고정)-->
             <div data-role="header" data-position="fixed" style="height: 4em;">
                 <!-- **날짜와 버튼을 중간으로 정렬해야함-->
-                <span>
-                    <h3 id="date" style="text-align:right;">Date_here</h3>
-                </span>
-                <a href="" id="menu_button" onclick="ShowMenu()">Menu_Button</a>
+                
+                    <h3 id="date" style="text-align:right;"></h3>
+                
+                <a href="" id="menu_button" onclick="ShowMenu()">Menu</a>
             </div>
 
             <!--잔액 확인 공간-->
-            <div data-role = content class="left_money_section" style="padding-top : 3em ; padding-bottom: 0em; padding-left: 0em;">
+            <div data-role = content class="left_money_section" style="padding-top : 1em ; padding-bottom: 0em; padding-left: 0em;">
                 <div class="ui-body ui-body-a" style="border-style: none">
-                    <h1 id = "cur_money">100,000원 남음</h1>
+                    <h1 id = "cur_money"></h1>
                 </div>
             </div>
 
             <!--지출 내역 확인 공간-->
-            <div data-role="content" class="payment_history">
-                <!-- 하나의 지출 카드 -->
-                <div id="cost_details" class="ui-body ui-body-a">
-                    <div style="height: 2em;" id = "test">
-                        <h3 style="float: left;" id = "paymentBoxName-0">지출이름</h3>
-                        <h3 style="text-align: right; float: right;" id = "paymentBoxDate-0">지출날짜</h3>
-                    </div>
-                    <div style="height: 2em;padding-top: 0.5em;">
-                        <h3 style="float: left;" id = "paymentBoxAmount-0">결제금액</h3>
-                        <h3 style="text-align: right; float: right;" id = "paymentBoxCategory-0">카테고리</h3>
-                    </div>
-                </div>
-                <br>
-
-                <!-- 하나의 지출 카드 -->
-                <div id="cost_details" class="ui-body ui-body-a">
-                    <div style="height: 2em;" id = "test">
-                        <h3 style="float: left;" id = "paymentBoxName-1">지출이름</h3>
-                        <h3 style="text-align: right; float: right;" id = "paymentBoxDate-1">지출날짜</h3>
-                    </div>
-                    <div style="height: 2em;padding-top: 0.5em;">
-                        <h3 style="float: left;" id = "paymentBoxAmount-1">결제금액</h3>
-                        <h3 style="text-align: right; float: right;" id = "paymentBoxCategory-1">카테고리</h3>
-                    </div>
-                </div>
-                <br>
-
-                <!-- 하나의 지출 카드 -->
-                <div id="cost_details" class="ui-body ui-body-a">
-                    <div style="height: 2em;" id = "test">
-                        <h3 style="float: left;" id = "paymentBoxName-2">지출이름</h3>
-                        <h3 style="text-align: right; float: right;" id = "paymentBoxDate-2">지출날짜</h3>
-                    </div>
-                    <div style="height: 2em;padding-top: 0.5em;">
-                        <h3 style="float: left;" id = "paymentBoxAmount-2">결제금액</h3>
-                        <h3 style="text-align: right; float: right;" id = "paymentBoxCategory-2">카테고리</h3>
-                    </div>
-                </div>
-                <br>
-                
-            </div>
+            <div data-role="content" class="payment_history"></div>
            
             <!-- 푸터바 공간 생성 -->
             <div data-role="footer" data-position="fixed" style="height: 3.5em; text-align: center;">
@@ -156,23 +132,17 @@
                     <a data-role="button" href = "#add_page" >+</a>
                 </div>
             </div>
-
         </div>
         
         <!-- 지출 내역 추가하는 페이지 -->
-        <div data-role="dialog" id="add_page" style="padding-top: 3em;">
+        <div data-role="dialog" id="add_page">
             <div data-role="content" id ="add-page">
                 <!-- 수입/지출 선책하는 부분-->
-                <div>
-                    <label class="slideBtn">
-
-                        <input type="checkbox">
-                      
-                        <span></span>
-                      
-                      </label>
-                                            
-                </div>
+                    <fieldset data-role="controlgroup" data-type = "horizontal" style="text-align: center;">
+                        <legend>수입/지출</legend>
+                        <input type="radio" id="outcome_radio_id" name="radio_button" value="-1"><label for="outcome_radio_id">지출</label>
+                        <input type="radio" id="income_radio_id" name="radio_button" value="1"><label for="income_radio_id">수입</label>
+                    </fieldset>
                 <!-- 금액 적는 부분 -->
                 <div data-role="fieldcontain">
                     <label for="name">금액</label>
@@ -184,13 +154,14 @@
                     <input type="text" name="name_memo" id="PaymentName" value=""  />
                 </div> 
                 <!-- 카테고리 고르는 박스 -->
-                <div id="category-box" style="height: 14em;">
-                    <h4>카테고리 고르는 박스</h4>
+                <div id="category-box" style="height: 14em;" >
+                    <div data-role="content" id="catIcons">
+                    </div>
                 </div>
                 
-                <div>
+                <div data-role="controlgroup" data-type = "horizontal" style="text-align: center;">
                     <a href="#" data-role="button" data-rel="back" id = "submit1">추가</a>
-                    <a href="#" data-role="button" data-rel="back">Back</a>
+                    <a href="#" data-role="button" data-rel="back">취소</a>
                 </div>
             </div>
         </div>

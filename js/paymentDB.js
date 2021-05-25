@@ -1,10 +1,12 @@
 var db = null;
-var var_no = null;
-var position = null;
-var index;
+//var var_no = null;
+//var position = null;
+//var index;
+var category_val
+var cur_bal = 0
 
 // Database를 생성합니다.
-function openDB(){
+function openDB_payment(){
     db = window.openDatabase('paymentDB','1.0','입출금내역DB',1024*1024*5);
     console.log('DB 생성');
 }
@@ -40,13 +42,13 @@ amount : 금액, id = PaymentAmount
 */
 function insertPayment(){
     db.transaction(function(tr){
-        var name = $('#id_memo').val();
-        var category = $('#id_category').val();
+        var name = $('#PaymentName').val();
+        var category = category_val
         var now = new Date();
         var year = now.getFullYear();
         var month = now.getMonth()+1;
         var day = now.getDate();
-        var amount = $('#id_money').val();
+        var amount = ($('#PaymentAmount').val()) * ($('input[name="radio_button"]:checked').val()); 
         var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
         
         if(name!=''&&category!=''&&amount!=''){
@@ -90,9 +92,9 @@ function updatePayment(){
 /*
 Payment id를 받아 Payment 정보 삭제
 */
-function deletePayment(){
+function deletePayment(id){
     db.transaction(function(tr){
-        var id = $('#deletePaymentId').val();
+        //var id = $('#deletePaymentId').val();
         var deleteSQL = 'delete from payment where id = ?';
         tr.executeSql(deleteSQL, [id], function(tr,rs){
             console.log('Payment 삭제');
@@ -418,34 +420,79 @@ function readAllCategoryPaymentAmountSum() {
 
 }
 
-// 최근 발생한 3개의 지출 
+// 최근 발생한 4개의 지출 
 function recentPayments() {
     db.transaction(function(tr){
         var selectSQL;
         selectSQL = 'select * from payment order by id desc';
         tr.executeSql(selectSQL, [], function(tr,rs){
-            console.log("최근 내역을 불러왔습니다.")
-            // 가장 최근 내역 카드 수정
-            console.log(rs.rows.item(0).id)
-            $('#paymentBoxName-0').text(rs.rows.item(0).name)
-            $('#paymentBoxDate-0').text(rs.rows.item(0).year+"_"+rs.rows.item(0).month+"_"+rs.rows.item(0).day)
-            $('#paymentBoxAmount-0').text(rs.rows.item(0).amount)
-            $('#paymentBoxCategory-0').text(rs.rows.item(0).category)
+            $('.payment_history').empty()
+            // 4개 이상일땐 카드를 4개 만든다.
+            if(rs.rows.length>=4){ 
+                for (var i = 0; i < 4 ; i++) {
+                    var payment_card = 
+                    "<!-- 하나의 지출 카드 -->\
+                    <div id='cost_details' class='ui-body ui-body-a'>\
+                        <a data-role='button' id = 'del_button' style='float: right; height: 10px;' value = '"+rs.rows.item(i).id+"' >X</a>\
+                        <div style='height: 2em;' id = 'first_row'>\
+                            <h3 style='float: left;' id = 'paymentBoxName'>"+rs.rows.item(i).name+"</h3>\
+                            <h3 style='text-align: right; float: right; padding-right: 1em;' id = 'paymentBoxDate'>"+rs.rows.item(0).year+"_"+rs.rows.item(0).month+"_"+rs.rows.item(0).day+"</h3>\
+                        </div>\
+                        <div style='height: 2em;padding-top: 0.5em;'>\
+                            <h3 style='float: left;' id = 'paymentBoxAmount-0'>"+rs.rows.item(i).amount+"</h3>\
+                            <h3 style='text-align: right; float: right; padding-right: 2em' id = 'paymentBoxCategory-0'>"+rs.rows.item(i).category+"</h3>\
+                        </div>\
+                    </div>\
+                    <br>"
 
-            console.log(rs.rows.item(1).id)
-            $('#paymentBoxName-1').text(rs.rows.item(1).name)
-            $('#paymentBoxDate-1').text(rs.rows.item(1).year+"_"+rs.rows.item(1).month+"_"+rs.rows.item(1).day)
-            $('#paymentBoxAmount-1').text(rs.rows.item(1).amount)
-            $('#paymentBoxCategory-1').text(rs.rows.item(1).category)
+                    $('.payment_history').append(payment_card);
+                }
+            }
+            else{
+                for (var i = 0; i < rs.rows.length ; i++) {
+                    var payment_card = 
+                    "<!-- 하나의 지출 카드 -->\
+                    <div id='cost_details' class='ui-body ui-body-a'>\
+                        <a data-role='button' id = 'del_button' style='float: right; height: 10px;' value = '"+rs.rows.item(i).id+"' >X</a>\
+                        <div style='height: 2em;' id = 'first_row'>\
+                            <h3 style='float: left;' id = 'paymentBoxName'>"+rs.rows.item(i).name+"</h3>\
+                            <h3 style='text-align: right; float: right; padding-right: 1em;' id = 'paymentBoxDate'>"+rs.rows.item(0).year+"_"+rs.rows.item(0).month+"_"+rs.rows.item(0).day+"</h3>\
+                        </div>\
+                        <div style='height: 2em;padding-top: 0.5em;'>\
+                            <h3 style='float: left;' id = 'paymentBoxAmount-0'>"+rs.rows.item(i).amount+"</h3>\
+                            <h3 style='text-align: right; float: right; padding-right: 2em' id = 'paymentBoxCategory-0'>"+rs.rows.item(i).category+"</h3>\
+                        </div>\
+                    </div>\
+                    <br>"
 
-            console.log(rs.rows.item(2).id)
-            $('#paymentBoxName-2').text(rs.rows.item(2).name)
-            $('#paymentBoxDate-2').text(rs.rows.item(2).year+"_"+rs.rows.item(2).month+"_"+rs.rows.item(2).day)
-            $('#paymentBoxAmount-2').text(rs.rows.item(2).amount)
-            $('#paymentBoxCategory-2').text(rs.rows.item(2).category)
-
-            
+                    $('.payment_history').append(payment_card);
+                }
+            }
         });
         
     });
+}
+
+// 이번달 현재까지의 최종 금액
+function get_cur_amount(){
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth()+1;
+    console.log('hello')
+    db.transaction(function(tr){
+        var selectSQL;
+        selectSQL = 'select * from payment where year = ? and month = ?';
+        tr.executeSql(selectSQL, [year, month], function(tr,rs){
+            cur_bal = 0
+            for (var i = 0; i < rs.rows.length ; i++) {
+                if (rs.rows.item(i).amount != 'undefined'){
+                    cur_bal += (rs.rows.item(i).amount)        
+                }
+            }
+            console.log(cur_bal)
+            $("#cur_money").text(cur_bal)
+        });
+    });
+
+    
 }
