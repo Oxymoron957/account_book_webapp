@@ -248,9 +248,9 @@
 
               function B(){
                 console.log(test);
-                var updateSQL = 'update auto set type=? where id = ?';
+                var updateSQL = 'update auto set type=?,update=? where id = ?';
                 for(var i=0;i<id.length;i++){
-                  tr.executeSql(updateSQL,["처리 후",id[i]],function(tr,rs){
+                  tr.executeSql(updateSQL,["처리 후",month,id[i]],function(tr,rs){
                   // console.log("auto 초기화 완료");
                   });
                 }
@@ -270,7 +270,48 @@
               //name text, category text, year integer, month integer, day integer, amount integer
             });
           }
-          
+
+          // 다음달이 되면 처리후 --> 처리전 되돌리기
+          function updateAuto(){
+            const id = [];
+
+            db.transaction(function(tr){
+              var today=new Date();
+              var day=today.getDate();
+              var month=today.getMonth()+1;
+              var year=today.getFullYear();
+
+              console.log(day);
+              
+              selectSQL='select * from auto';
+
+              function A(callback){
+                tr.executeSql(selectSQL, [], function(tr,rs){
+                  test='yes';
+                  for(var i=0;i<rs.rows.length;i++)
+                  {
+                    if((month!=rs.rows.item(i).update)&&(rs.rows.item(i).type==='처리 후'))
+                    {
+                      id[i] = rs.rows.item(i).id;
+                    }
+                  }
+                  callback();
+                });
+                }
+
+                function B(){
+                  var updateSQL = 'update auto set type=? where id = ?';
+                  for(var i=0;i<id.length;i++){
+                    tr.executeSql(updateSQL,["처리 전",id[i]],function(tr,rs){
+                    // console.log("auto 초기화 완료");
+                    });
+                  }
+                }
+                A(B);
+                //name text, category text, year integer, month integer, day integer, amount integer
+              });
+            }
+            
 
 
 
