@@ -31,6 +31,59 @@ function createTable()  {
 }
 */
 
+// function createTable_auto() {
+//     db.transaction(function(tr){
+//     // var deleteSQL = 'drop table payment';
+//     var createSQL = 'create table if not exists auto(name text,integer day,boolean ajik';      
+//     // tr.executeSql(deleteSQL);
+    
+//     tr.executeSql(createSQL, [], function(){
+//         console.log('2_1_테이블생성_sql 실행 성공...!!!!!!');       
+//      }, function(){
+//         console.log('2_1_테이블생성_sql 실행 실패...');           
+//      });
+//      }, function(){
+//         console.log('2_2_테이블 생성 트랜잭션 실패...롤백은 자동');
+//      }, function(){
+//         console.log('2_2_테이블 생성 트랜잭션 성공...');
+//       });
+//   }
+
+//     function insertPayment(){
+//     db.transaction(function(tr){
+        
+//         var insertSQL = 'insert into auto(name,day,ajik) values(test,3,false)';
+        
+//         tr.executeSql(insertSQL,[], function(tr,rs){
+                
+//             }, function(tr,err){
+//                 console.log('DB오류'+err.message+err.code);
+//                 }
+//             );
+//         });
+//     }
+
+
+//카테고리 테이블 만들기
+function createTableCat() 
+{
+  db.transaction(function(tr){
+    var createSQL = 'create table if not exists category(name text, color color)';      
+    tr.executeSql(createSQL, [], function(){
+      console.log('카테고리 테이블 생성 sql 실행 성공');
+    },function(){
+      console.log('카테고리 테이블 생성 sql 실행 실패');
+    },function(){
+      console.log('카테고리 테이블 생성 트랜잭션 실패 , 롤백 자동');
+    },function(){
+      console.log('카테고리 테이블 생성 트랜잭션 성공');
+    }
+  );          
+});
+}
+
+
+//Payment테이블 생성
 function createTable() {
     db.transaction(function(tr){
     // var deleteSQL = 'drop table payment';
@@ -124,109 +177,104 @@ function deletePayment(){
 
 // 카테고리별 지출 내역 (선택 연도,월에 지출내역 표시 -> 각각 반복문에서 카드를 만들고 값 표시)
 function readCategoryPayment(category){
+    
+    // const paymentID = [];
+    // const paymentName = [];
+    // const paymentCategory = [];
+    // const paymentDay = [];
+    // const paymentAmount = [];
+    // const categoryColor = [];
+    // var test='no';
+
     db.transaction(function(tr){
+        const paymentID = [];
+        const paymentName = [];
+        const paymentCategory = [];
+        const paymentDay = [];
+        const paymentAmount = [];
+        const categoryColor = [];
+        var test='no';
+
+        function A(callback){
         var selectSQL;
-        var year = $('#graphYear').val();
-        var month = $('#graphMonth').val();
-        if(category==='all')
-        {
+        var year = new Date().getFullYear();
+        var month = new Date().getMonth()+1;
+        test='yest'
+        // if(category==='all')
+        // {
             selectSQL = 'select payment.id, payment.name,payment.category,payment.day,payment.amount,category.color from payment join category on payment.category=category.name where payment.year =? and payment.month = ? order by payment.day desc';
             tr.executeSql(selectSQL, [year,month], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
-                document.write("\
-                        <div class=\"screen list-view\">\n\
-                                <ul class=\"list-ul\">");
 
                 for(var i=0;i<rs.rows.length;i++)
                 {
-                    var paymentID = rs.rows.item(i).id;
-                    var paymentName = rs.rows.item(i).name;
-                    var paymentCategory = rs.rows.item(i).category;
-                    var paymentDay = rs.rows.item(i).day;
-                    var paymentAmount = rs.rows.item(i).amount;
-                    var categoryColor = rs.rows.item(i).color;
-
-                    document.write("\
-                        <li class=\"list-item\" data-id =\""
-                        +paymentID+
-                        "\">\n\
-                                    <div class=\"card\">\n\
-                                        <div class=\"thumbnail\">\n\
-                                            <div class=\"tumbImg\" style=\"background: "
-                                            + categoryColor +
-                                            ";\"></div>\n\
-                                            <div class=\"tumbInfo\">"
-                                                + paymentCategory +   
-                                            "</div>\n\
-                                        </div>\n\
-                                        <div class=\"details\">\n\
-                                            <div class=\"name\">"
-                                            + paymentName +
-                                            "</div>\n\
-                                            <div class=\"money\">"
-                                            + paymentAmount +
-                                            "</div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                </li>");
-                    //반복해야할 것
-                    //////////////////
+                    console.log(rs.rows.item(i));
+                    paymentID[i] = rs.rows.item(i).id;
+                    paymentName[i] = rs.rows.item(i).name;
+                    paymentCategory[i] = rs.rows.item(i).category;
+                    paymentDay[i] = rs.rows.item(i).day;
+                    paymentAmount[i] = rs.rows.item(i).amount;
+                    categoryColor[i] = rs.rows.item(i).color;
                 }
-                document.write("\
-                        </ul>\n\
-                            </div>");
+                callback(paymentID,categoryColor,paymentCategory,paymentName,paymentAmount);
             });
+            
+        // }
+        // else
+        // {
+        //     selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
+        //     tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
+        //         console.log('지출 내역 조회' + rs.rows.length+'건');
+        //         test='yes';
+        //         for(var i=0;i<rs.rows.length;i++)
+        //         {
+                    
+        //             paymentID[i] = rs.rows.item(i).id;
+        //             paymentName[i] = rs.rows.item(i).name;
+        //             paymentCategory[i] = rs.rows.item(i).category;
+        //             // paymentDay[i] = rs.rows.item(i).day;
+        //             paymentAmount[i] = rs.rows.item(i).amount;
+        //             categoryColor[i] = rs.rows.item(i).color;
+        //         }
+        //     });
+        // }
+            
         }
-        else
-        {
-            selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
-            tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
-                console.log('지출 내역 조회' + rs.rows.length+'건');
-
-                document.write("\
-                        <div class=\"screen list-view\">\n\
-                                <ul class=\"list-ul\">");
-                                
-                for(var i=0;i<rs.rows.length;i++)
-                {
-                    var paymentID = rs.rows.item(i).id;
-                    var paymentName = rs.rows.item(i).name;
-                    var paymentCategory = rs.rows.item(i).category;
-                    var paymentDay = rs.rows.item(i).day;
-                    var paymentAmount = rs.rows.item(i).amount;
-                    var categoryColor = rs.rows.item(i).color;
-
-                    document.write("\
-                        <li class=\"list-item\" data-id =\""
-                        +paymentID+
-                        "\">\n\
-                                    <div class=\"card\">\n\
-                                        <div class=\"thumbnail\">\n\
-                                            <div class=\"tumbImg\" style=\"background: "
-                                            + categoryColor +
-                                            ";\"></div>\n\
-                                            <div class=\"tumbInfo\">"
-                                                + paymentCategory +   
-                                            "</div>\n\
-                                        </div>\n\
-                                        <div class=\"details\">\n\
-                                            <div class=\"name\">"
-                                            + paymentName +
-                                            "</div>\n\
-                                            <div class=\"money\">"
-                                            + paymentAmount +
-                                            "</div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                </li>");
-
-                }
-                document.write("\
-                        </ul>\n\
-                            </div>");
-            });
+        
+        function B(paymentID,categoryColor,paymentCategory,paymentName,paymentAmount){
+    
+            console.log(test);
+            console.log(paymentID.length);
+            for(var i=0;i<paymentID.length;i++)
+            {
+                console.log(paymentID[i]);
+                $("#list-ul").append("<li>test</li>");
+                // $("#list-ul").append("<li class=\"list-item\" data-id =\""
+                // +paymentID[i]+
+                // "\">\n\
+                //             <div class=\"card\">\n\
+                //                 <div class=\"thumbnail\">\n\
+                //                     <div class=\"tumbImg\" style=\"background: "
+                //                     + categoryColor[i] +
+                //                     ";\"></div>\n\
+                //                     <div class=\"tumbInfo\">"
+                //                         + paymentCategory[i] +   
+                //                     "</div>\n\
+                //                 </div>\n\
+                //                 <div class=\"details\">\n\
+                //                     <div class=\"name\">"
+                //                     + paymentName[i] +
+                //                     "</div>\n\
+                //                     <div class=\"money\">"
+                //                     + paymentAmount[i] +
+                //                     "</div>\n\
+                //                 </div>\n\
+                //             </div>\n\
+                //         </li>");
+            }
         }
-    });
+        A(B);
+    });    
 }
 
 // 선택한 연도,월에 ex) 2021 5월의 지출 총액 조회(원형 그래프에서 1. 전체지출)
@@ -287,7 +335,8 @@ function readCategoryPaymentAmountSum_All(category){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
                 for(var i=0;i<rs.rows.length;i++)
                 {
-                    arr[rs.rows[i]['month']]=rs.rows[i]['sum(amount)']
+                    console.log(rs.rows.item(i));
+                    arr[rs.rows[i]['month']-1]=rs.rows[i]['sum(amount)']
                 }
 
                 var chart = new Chart(ctx, {

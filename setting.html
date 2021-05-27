@@ -7,23 +7,461 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    
 
-    <script type="text/javascript">
-        $(document).ready(function(){
-          $('#saveBu').click(function(){
-            var budget=$('#budgetInput').val();
-          });
-
-          $('#saveCat').click(function(){
-            var Name=$('#catName').val();
-            var Color=$('#catColor').val();
-            $("<span>"+Name+"</span>").appendTo('#dot-wrap');
-          });
+    
+    <!-- <script type="text/javascript" src="C:\4학년 1학기\모바일\mobile_project\js\db.js"></script> -->
+      <script>
+          $(document).ready( function() {
+                openDB();
+                createTableCat(); //카테고리 테이블 생성
+                createTableAuto(); //자동입출금 테이블 생성
+                createCatList(); //자동입출금 테이블에서 불러와 select 선택지 추가해줌
+                createAutoList(); //자동입출금 테이블에서 불러와 자동입출금 관리 페이지에 카드를 추가해줌
+                insertAutoToDB(); //자동입출금 항목의 해당하는 날짜가 되면 알아서 자동입출금 테이블에 추가해줌
+                createCatIcon(); //카테고리 테이블에서 불러와 동그라미 생성해줌
+                createTable();
+               // deletePayment();
+                //saveBudget();//예산 최초 저장
+                
         });
 
+
+
+          //데베 만들기
+          function openDB(){
+            db = window.openDatabase('paymentDB','1.0','가계부DB',1024*1024*5);
+            console.log('DB 생성');
+          }
+          
+
+
+
+
+
+
+
+
+
+
+          function createTable() {
+              db.transaction(function(tr){
+              // var deleteSQL = 'drop table payment';
+              var createSQL = 'create table if not exists payment(id integer primary key autoincrement ,name text, category text, year integer, month integer, day integer, amount integer)';      
+              // tr.executeSql(deleteSQL);
+              
+              tr.executeSql(createSQL, [], function(){
+                  console.log('2_1_테이블생성_sql 실행 성공...!!!!!!');       
+              }, function(){
+                  console.log('2_1_테이블생성_sql 실행 실패...');           
+              });
+              }, function(){
+                  console.log('2_2_테이블 생성 트랜잭션 실패...롤백은 자동');
+              }, function(){
+                  console.log('2_2_테이블 생성 트랜잭션 성공...');
+                });
+            }
+
+
+
+
+
+
+
+
+
+          //#########################카테고리##############################
+
+
+          //자동 입출금 테이블 만들기
+          function createTableAuto() {
+            db.transaction(function(tr){
+            var createSQL = 'create table if not exists auto(name text, type text, category text, day number, amount integer)';      
+            tr.executeSql(createSQL, [], function(){
+              console.log('자동입출금 테이블 생성 sql 실행 성공');
+            },function(){
+              console.log('자동입출금 테이블 생성 sql 실행 실패');
+            });
+            }, function(){
+              console.log('자동입출금 테이블 생성 트랜잭션 실패 , 롤백 자동');
+            }, function(){
+              console.log('자동입출금 테이블 생성 트랜잭션 성공');
+
+ 
+
+            }); 
+          }
+
+
+          //예산 최초저장
+          function saveBudget(){
+          db.transaction(function(tr){
+            var newName = '이번 달 예산';
+            var newCategory = '예산';
+            var newFlag="완료";
+            var newDay=1;
+            var amount=0;
+
+            var insertSQL = 'insert into auto(name,type,category,day,amount) values(?,?,?,?,?)';
+            tr.executeSql(insertSQL,[newName,newFlag,newCategory,newDay,amount],function(tr,rs){
+            console.log('예산 업댓');
+        });
+    });
+}// 수정 후에 ajax로 ? refresh로 ? 페이지 수정하기
+
+
+
+
+
+
+          //예산 관리 페이지에서 예산 저장 버튼 누르면 발동. 자동으로 예산 업데이트(자동입출금 테이블에서 확인 가능)
+          function updateBudget(){
+            db.transaction(function(tr){
+              var catBud = "예산";
+             var moneyBud=$('#budgetInput').val();
+              var updateSQL = 'update Auto set amount=? where category=?';
+              tr.executeSql(updateSQL,[moneyBud,catBud],function(tr,rs){
+                  console.log('예산 업데이트 완료');
+                },function(tr,err){
+                  console.log('DB오류'+err.message+err.code);
+               }
+              );
+            });  
+          }
+
+
+
+
+
+
+          //자동입출금 관리 페이지에서 추가항목 저장 버튼 누르면 발동. 자동 입출금 테이블에 항목 추가
+          function addAutoMoney(){
+            db.transaction(function(tr){
+              var target=document.getElementById("select");
+              var target2=document.getElementById("select2");
+
+              var name=$('#nameAuto').val();
+              var type="처리 전";
+              var category=target2.options[target2.selectedIndex].text;
+              console.log("type"+type+"  category"+category+name);
+              var day=$('#dateAuto').val();
+              var amount=$('#inputAuto').val();
+              if(target.options[target.selectedIndex].text=="출금")
+              {
+                
+                amount=amount*(-1);
+              }
+              var insertSQL = 'insert into auto(name,type,category,day,amount) values(?,?,?,?,?)';
+        
+              tr.executeSql(insertSQL,[name,type,category,day,amount], function(tr,rs){
+              console.log('no: ' + rs.insertId);
+              }, function(tr,err){
+                console.log('DB오류'+err.message+err.code);
+              }
+              );
+            });
+          }
+
+
+
+
+          //자동 입출금 목록 테이블에서 가져오기
+          function createAutoList(){
+            db.transaction(function(tr){
+              var selectSQL='select * from auto';
+              tr.executeSql(selectSQL,[],function(tr,rs){
+                for(var i=0;i<rs.rows.length;i++)
+                {
+                  var autoName= rs.rows.item(i).name;
+                  
+                  var autoCat=rs.rows.item(i).category;
+                  var autoDay=rs.rows.item(i).day;
+                  var autoAmount=rs.rows.item(i).amount;
+                  var autotype=rs.rows.item(i).type;
+                  if(autoAmount<0)
+                  {
+                    autotype="출금";
+                  }
+                  else{
+                    autotype="입금";
+                  }
+                  //#autoShowList라는 곳에 이 html 요소를 넣어줌. 그럼 for문 하나씩 돌 때 마다 하나씩 추가되겟죠??
+                  $('<li style="border:1px solid black; margin-bottom:20px;"><p style="font-size:20px;">'
+                    +autoName+' '+autoDay+'일 마다<br/><p style="font-size:30px;">'
+                      +autoAmount*(-1)+'원 '+autotype+'</p><br/>카테고리 : '
+                        +autoCat+'<br/></li>').appendTo('#autoShowList');
+                }
+              });
+            });
+          }
+
+
+
+
+
+
+          //자동입출금 payment에 날짜에 따라 반영하기
+          function insertAutoToDB(){
+            var changeName;
+            db.transaction(function(tr){
+              var today=new Date();
+              var day=today.getDate();
+              var month=today.getMonth();
+              var year=today.getFullYear();
+              console.log(day);
+              
+              selectSQL='select * from auto';
+              var test='no';
+              function A(callback){
+                tr.executeSql(selectSQL, [], function(tr,rs){
+                  test='yes';
+                  for(var i=0;i<rs.rows.length;i++)
+                {
+                  if((day>=rs.rows.item(i).day)&&(rs.rows.item(i).type==='처리 전'))
+                  {
+                    var name=rs.rows.item(i).name;
+                    var category=rs.rows.item(i).category;
+                    var amount=rs.rows.item(i).amount;
+                    console.log(rs.rows.item(i));
+                    changeName = name;
+
+                    // var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
+                    // tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
+                      
+                    // console.log('no: ' + rs.insertId);
+                    // }, function(tr,err){
+                    //   console.log('DB오류'+err.message+err.code);
+                    // }
+                    // );
+                    
+                  }
+                }
+                callback();
+              });
+              }
+
+              function B(){
+                console.log(test);
+                // var updateSQL = 'update auto set type=? where name = ?';
+                // tr.executeSql(updateSQL,["처리 후",changeName],function(tr,rs){
+                //   console.log("auto 초기화 완료");
+                // });
+
+                // var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
+          
+                // tr.executeSql(insertSQL,[changeName,'testC',2021,5,25,9999], function(tr,rs){
+                // console.log('no: ' + rs.insertId);
+                // }, function(tr,err){
+                //   console.log('DB오류'+err.message+err.code);
+                // }
+                // );
+              }
+              A(B);
+              //name text, category text, year integer, month integer, day integer, amount integer
+            });
+          }
+          
+
+
+
+
+
+
+          function insert2Pay(name,category,year,month,day,amount){
+            db.transaction(function(tr){
+              var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
+              tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
+                console.log('no: ' + rs.insertId);
+              }, function(tr,err){
+                console.log('DB오류'+err.message+err.code);
+              }
+              );
+            });
+          }
+
+          function modifyAuto(i){
+            db.transaction(function(tr){
+              var change='완료';
+              var updateSQL = 'update payment set type=? where rowid=?';
+              tr.executeSql(updateSQL,[change,i],function(tr,rs){
+                console.log(i+" : 완료로 처리");
+              });
+            });
+          }
+
+
+
+
+
+
+
+
+
+
+          //#########################카테고리##############################
+
+          //카테고리 테이블 만들기
+          function createTableCat() 
+          {
+            db.transaction(function(tr){
+              var createSQL = 'create table if not exists category(name text, color color)';      
+              tr.executeSql(createSQL, [], function(){
+                console.log('카테고리 테이블 생성 sql 실행 성공');
+              },function(){
+                console.log('카테고리 테이블 생성 sql 실행 실패');
+              },function(){
+                console.log('카테고리 테이블 생성 트랜잭션 실패 , 롤백 자동');
+              },function(){
+                console.log('카테고리 테이블 생성 트랜잭션 성공');
+              }
+            );          
+          });
+          }
+
+
+
+          //카테고리 추가
+          function addCategory() {
+            db.transaction(function(tr){
+              var insertSQL = 'insert into category(name,color) values(?,?)';
+              var name = $('#catName').val();
+              var color = $('#catColor').val();
+              
+              tr.executeSql(insertSQL,[name,color],function(tr,rs){
+                //createCatIcon();
+              },
+              
+                function(tr,err){
+                console.log('DB오류'+err.message+err.code);
+              })
+            });
+          }
+
+
+
+
+          
+          function deletePayment(){
+    db.transaction(function(tr){
+        var id = $('#deletePaymentId').val();
+        var deleteSQL = 'delete from auto where rowid = ?';
+        tr.executeSql(deleteSQL, ['4'], function(tr,rs){
+            console.log('Payment 삭제');
+            //화면 업데이트 
+        }, function(tr,err){
+            console.log('DB 오류'+err.message+err.code);
+        });
+    });
+}
+
+
+
+
+
+
+        //카테고리를 자동 입출금의 카테고리 선택 (<select>에다 넣기)에다 추가
+        function createCatList(){
+          db.transaction(function(tr){
+            var selectSQL='select * from category';
+            //select의 id로 불러옴
+            var targetSel=document.getElementById('select2');
+            tr.executeSql(selectSQL,[],function(tr,rs){
+              //테이블 정보 하나씩 불러오기
+              for(var i=0;i<rs.rows.length;i++)
+              {
+                //테이블의 name항목 저장
+                var catSelect= rs.rows.item(i).name;
+                var opt=document.createElement('option');
+                //value와 내용을 name(데베의 카테고리이름)으로 정해줌
+                opt.setAttribute('value',catSelect);
+                opt.innerText=catSelect;
+                //child로 넣기
+                targetSel.appendChild(opt);
+              }
+            });
+          });
+        }
+
+      
+
+
+        //카테고리 데베에서 가져와 원형 아이콘 만들기
+        function createCatIcon(){
+          db.transaction(function(tr){
+            var selectSQL='select * from category';
+            tr.executeSql(selectSQL,[],function(tr,rs){
+              //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
+              $('<div class="dot-wrap" id="dot-wrap">').appendTo('#catIcons');
+                var target=document.getElementById('#dot-wrap');
+                $(target).css({
+                  "width":"360px",
+                  "margin":0, auto});
+
+              //정보 하나씩 불러옴
+              for(var i=0;i<rs.rows.length;i++)
+              {
+                var catName=rs.rows.item(i).name;
+                var catColor=rs.rows.item(i).color;
+                //span 하나씩 추가
+                $('<span style="border:3px solid black; background-color:'+catColor+' "><p style="font-size:13px; margin-top:-15px;">'+catName+'</p></span>').appendTo('#catIcons');
+                var target2=document.getElementsByTagName('span');
+                //현재 span의 css스타일 설정해줌
+                $(target2).css({        
+                  "width":"60px",
+                  "height":"60px",
+                  "margin-right":"3px",
+                  "margin-left":"3px",
+                  "align-items": "center",
+                  "border-radius":"50%",
+                  "font-weight":"bold",
+                  "text-align":"center",
+                  "line-height":"200px",
+                  "float":"left",
+                  "margin-top": "50px",
+                  "margin-left":"20px",
+                  "margin-right":"20px",
+                  "margin-bottom":"30px"});
+                }
+                //catIcons라는 카테고리 페이지의 content부분에 넣음
+                $('</div>').appendTo('#catIcons');
+            });
+          });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //#############################암호##############################
+
+
+        //암호 설정칸
         var code2="0000";
         var code;
-
+        //암호 체크
         function check_Pass() {
         if (document.number.number1.value.length==1) {
           console.log("ddd");
@@ -56,7 +494,7 @@
         }
         return;
       }
-
+      //암호 수정
       function change_Pass() {
         if (document.number2.number5.value.length==1) {
           document.number2.number6.focus();
@@ -78,171 +516,52 @@
           }
         return;
       }
-
-
       </script>
-
-    <style>
-      .dot-wrap{
-        width:360px;
-        margin:0 auto;
-      }
-      .circle1{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#eec4c4;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle2{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#94d0cc;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle3{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#d1d9d9;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle4{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#ff4a4a;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle5{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#f7ea00;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle6{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#81b214;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle7{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#9f6ff8;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle8{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#edffa9;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-      .circle9{
-        width:70px;
-        height:70px;
-        align-items: center;
-        border-radius:50%;
-        background:#ffcc29;
-        font-size:17px;
-        font-weight:"bold";
-        text-align:center;
-        line-height:200px;
-        float:left;
-        margin-top: 50px;
-        margin-left:20px;
-        margin-right:20px;
-        margin-bottom:30px;
-      }
-
-    </style>
   </head>  
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--##################메인 화면######################-->
 
   <body>
     <div data-role="page" id="main">
       <div data-role="header" data-postion="fixed" style="background-color:rgb(211, 214, 247)">
-        <h1 style="font-size:22px">설 정</h1>
+        <h1 style="font-size:22px; ">설 정</h1>
         <a href="#menu" data-role="button" data-icon="bars" data-iconpos="notext" style="margin-top: 10px;"></a>
+
+        <!--메뉴 창-->
+        <div data-role="panel" id="menu" data-display="overlay">
+          <div data-role="header">
+            <h1>메뉴</h1>
+          </div>
+          <div data-role="content">
+            <tr data-role="listview" data-inset="true">
+              <td><a href="#" style="font-size:20px">메 인</a></td>
+              <td><a href="#" style="font-size:20px">통계</a></td>
+              <td><a href="#" style="font-size:20px">설정</a></td>
+            </tr>
+          </div>
+        </div>
       </div>
-      
+      <!--설정 리스트-->
       <ul data-role="listview" data-inset="true">
         <li><a href="#budget" data-transition="slide" style="font-size:20px">예산 설정</a></li>
         <li><a href="#auto" style="font-size:20px">자동 입/출금 관리</a></li>
@@ -254,40 +573,96 @@
     </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <!--##################예산 설정######################-->
     <div data-role="page" id="budget" style="background-color:rgb(211, 214, 247)">
       <p style="margin-left:16px; margin-top: 110px;font-size:30px;"><b>당신의 예산은...</b></p>
-
+      <!--예산에 대한 정보를 입력받는다.(얼마인지만)-->
       <div data-role="content">
         <fieldset>
           <table>
             <tr>
               <td><label for="budgetInput"style="font-size:20px;">월 </label></td>
-              <td><input type="number" name="budgetInput" id="budgetInput" placeholder="예산 입력"></td>
+              <td><input type="integer" name="budgetInput" id="budgetInput" placeholder="예산 입력"></td>
               <td><label for="budgetInput"style="font-size:20px;">원</label></td>
-              <td><a href="#main" data-role="button" id="saveBu" data-inline="true" >저 장</a></td>
+
+              <!--저장 버튼을 누르면 updateBudget()이 발동이 되어 자동입출금 테이블에 알아서 이번 달 1일 날짜로 예산 항목으로 추가가 된다.-->
+              <td><a href="#main" data-role="button" id="saveBu" data-inline="true" onclick="updateBudget();">저 장</a></td>
             </tr>
           </table>
         </fieldset>
       </div>
-
+      
    </div>
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     <!--##################자동 입/출금 관리######################-->
+
+   <!--자동 입출금 관리 메인 홈 페이지. 여기에 자동 입출금 카드가 뜬다(createListAuto)-->
   <div data-role="page" id="auto">
     <div data-role="header"data-position="fixed">
-      <a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" style="margin-top: 10px;"></a>
+      <a href="#main" data-role="button" data-icon="back" data-iconpos="notext" style="margin-top: 10px;"></a>
       <h1 style="font-size:19px">자동 입/출금 관리</h1>
       <a href="#addAuto" data-role="button" data-transition="slidedown" data-icon="plus" data-iconpos="notext" style="margin-top: 10px;"></a>
     </div>
+    <div data-role="content">
+      <lu data-role="listview" id="autoShowList">
+      </lu>
+    </div>
   </div>
 
+  <!--자동 입출금 항목 추가 페이지-->
   <div data-role="page" id="addAuto">
     <div data-role="header">
       <h1>자동 입/출금</h1>
+      <a href="#auto" data-role="button" data-transition="slidedown" data-icon="delete" data-iconpos="notext" syle="argin-top:10px;"></a>
     </div>
-
+      <!--추가하는 항목에 대한 정보를 입력받는다-->
       <div data-role="content">
+        </div>
         <fieldset>
           <table>
             <tr>
@@ -299,28 +674,34 @@
               </td>
               <td>           
                 <select name="select2" id="select2" data-inline="true">
-                  <option value="food">식비</option>
-                  <option value="cafe">카페/간식</option>
-                  <option value="drink">술/유흥</option>
-                  <option value="life">생활</option>
-                  <option value="trans">교통</option>
-                  <option value="living">주거</option>
-                  <option value="med">의료</option>
-                  <option value="cult">문화/여가</option>
-                  <option value="trav">여행/숙박</option>
+                  <option value="0">선택</option>
                 </select>
               </td>
+              <td>
+                <h4>매 월 </h4>
+              </td>
+              <td>
+                <input type="number" name="dateAuto" id="dateAuto" min="1" max="31" placeholder="날짜"></input>
+              </td>
+              <td>
+              <h4>일</h4>
+              </td>
+
             </tr>
           </table>
           <table>
             <tr>
-              <td style="width:300px;"><input type="number" name="inputAuto" id="inputAuto" style="font-size:22x;" placeholder="금액 입력"></td>
-              <td><label for="budgetInput"style="font-size:25px;">원</label></td>
+              <td style="width:140px"><input type="text" name="nameAuto" id="nameAuto" style="font-size:22x;" placeholder="상세 내용"></input></td>
+              <td style="font-size:25px;">으로</td>
+              <td style="width:100px"><input type="number" name="inputAuto" id="inputAuto" style="font-size:22x;" placeholder="금액 입력"></input></td>
+              <td><label for="inputAuto"style="font-size:25px;">원</label></td>
             </tr>
           </table>
-
         </fieldset>
-        <a href="#auto" data-role="button" id="saveCat" data-transition="slideup">저장</a>
+
+
+        <!--저장 버튼을 누르면 addAutoMoney 발동으로 자동 입출금 테이블에 업로드된다-->
+        <a href="#auto" data-role="button" id="saveAuto" data-transition="slideup" onclick="addAutoMoney();">저장</a>
       </div>
     </div>
   </div>
@@ -330,70 +711,65 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--##################카테고리 관리######################-->
+
+
+  <!--카테고리 메인 홈 페이지-->
+  <!--이 페이지에 createIconList(동그라미)가 뜨도록 함-->
   <div data-role="page" id="category">
     <div data-role="header"data-position="fixed">
       <a href="#main" data-role="button" data-icon="back"  data-iconpos="notext" style="margin-top: 10px;"></a>
       <a href="#addCat" data-role="button" data-transition="slidedown" data-icon="plus" data-iconpos="notext" style="margin-top: 10px;"></a>
       <h1 style="font-size:19px">카테고리 관리</h1>
     </div>
-    <div data-role="content">
-      <div class="dot-wrap" id="dot-wrap">
-        <span class="circle1">식비</span>
-        <span class="circle2">카페/간식</span>
-        <span class="circle3">술/유흥</span>
-        <span class="circle4">생활</span>
-        <span class="circle5">교통</span>
-        <span class="circle6">주거</span>
-        <span class="circle7">의료</span>
-        <span class="circle8">문화/여가</span>
-        <span class="circle9">여행/숙박</span>>
+    <div data-role="content" id="catIcons">
       </div>
     </div>
-
-
-    
-    <canvas id="myCanvas" width="1000" height="1000">
-    </canvas>
-
-  
-    <script>
-
-
-
-      /*
-      window.onload=function(){
-        var cnvs=document.getElementById("myCanvas");
-        if(cnvs.getContext){
-          var ctx=cnvs.getContext('2d');
-          ctx.beginPath();
-          ctx.arc(70,110,30,0,2*Math.PI);
-          ctx.stroke();
-          ctx.fillStyle="#eec4c4";
-          ctx.fill;
-        }
-        else alert('canvas 지원 안함');
-      }*/
-    </script>
   </div>
 
+  <!--카테고리 추가 장-->
   <div data-role="page" id="addCat">
     <div data-role="header">
       <h1>카테고리 추가</h1>
+      <a href="#category" data-role="button" data-transition="slidedown" data-icon="delete" data-iconpos="notext" syle="argin-top:10px;"></a>
     </div>
     <div data-role="content">
       
+      <!--추가하는 카테고리에 대한 정보를 입력받음-->
       <fieldset>
         <table>
           <tr>
             <td><label for="catName"style="font-size:19px;">카테고리 :  </label></td>
             <td><input type="text" name="catName" id="catName" placeholder="이름"></td>
-          
             <td><input type="color" name="catColor" id="catColor"></td>
           </tr>
         </table>
       </fieldset>
-
-      <a href="#category" data-role="button" id="saveCat" data-transition="slideup">저장</a>
+      <!--저장 버튼을 누르면 addCategory함수 발동해서 카테고리 테이블에 추가-->
+      <a href="#category" data-role="button" id="saveCat" data-transition="slideup" onclick="addCategory();" onclick="top.location='javascript:location.reload()'">저장</a>
     </div>
   </div>
 
@@ -401,7 +777,28 @@
 
 
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!--##################암호설정######################-->
+
+  <!--비번 체크하는 페이지-->
   <div data-role="page" id="password" style="background-color:rgb(211, 214, 247)" >
     <form method=post name=number>
       <p>일단 초기 암호를 0000으로 했습니다</p>
@@ -416,7 +813,7 @@
       </table>
       </form>
     </div>
-
+    <!--비번 변경하는 페이지-->
     <div data-role="page" id="password2" style="background-color:#dddddd;">
       <form method=post name=number2>
       <p>변경한 다음에는 입력한 암호로 확인받으면 됩니다</p>
@@ -433,6 +830,29 @@
     </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!--#################초기화######################-->
+
+
+    <!--초기화 하기-->
     <div data-role="dialog" id="warning">
       <div data-role="header" data-postion="fixed">
         <h1>초기화 경고</h1>

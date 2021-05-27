@@ -33,31 +33,18 @@
     <script>
         $( document ).ready( function() {
             openDB();
+            
           $( '#M' ).click( function() {
             $( '#menu' ).slideToggle();
           });
             var category = 'all';
                 
             readCategoryPaymentAmountSum_All(category);
+            readCategoryPayment(category);
+            $("#list-ul").append("<li>test</li>");
+    
         });
     </script>
-    <script>
-        $(document).ready(function() {
-        var $cards = $('.card');
-            $menuItems = $('.menu-item');
-    
-        $cards.on('click', function() {
-            $(this).toggleClass('active');
-        });
-    
-        $menuItems.on('click', function() {
-            $menuItems.each(function() {
-                $(this).removeClass('active');
-            })
-            $(this).addClass('active');
-        });
-    });
-      </script>
 </head>
 <body>
     <div id="option">
@@ -86,16 +73,13 @@
         </div>
 
         <div class="graph">
-            <div class="row my-3"> 
-                <div class="col"> 
-                    <h4>소비액</h4> 
-                </div>
+            <div class="graphTime"> 
              </div>
 
               <div class="row my-2">
                 <div class="col"> 
                     <div class="card">
-                        bb
+                        2021년 5월 27일
                         <div class="card-body">
                             aa
                             <canvas id="myChart" style="height:50vh; width:100%">></canvas>
@@ -105,12 +89,15 @@
             </div>
         </div>   
     </div>
+    <script>
+    </script>
     <div class="screen list-view">
         <ul class="list-ul">
-            <li class="list-item">
+            <li>gg</li>
+            <!-- <li class="list-item">
                 <div class="card">
                     <div class="thumbnail">
-                        <div class="tumbImg"></div>
+                        <div class="tumbImg" style="background: X;"></div>
                         <div class="tumbInfo">
                             식비
                         </div>
@@ -120,64 +107,73 @@
                         <div class="money">10000</div>
                     </div>
                 </div>
-            </li>
-            <li class="list-item">
-                <div class="card">
-                    <div class="thumbnail">
-                        <img src="https://unsplash.it/200/200?random=#{random}"/>
-                        <div class="tumbInfo">
-                            식비
-                        </div>
-                    </div>
-                    <div class="details">
-                        <div class="name">오늘 저녁</div>
-                        <div class="money">10000</div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-item">
-                <div class="card">
-                    <div class="thumbnail">
-                        <img src="https://unsplash.it/200/200?random=#{random}"/>
-                        <div class="tumbInfo">
-                            식비
-                        </div>
-                    </div>
-                    <div class="details">
-                        <div class="name">오늘 저녁</div>
-                        <div class="money">10000</div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-item">
-                <div class="card">
-                    <div class="thumbnail">
-                        <img src="https://unsplash.it/200/200?random=#{random}"/>
-                        <div class="tumbInfo">
-                            식비
-                        </div>
-                    </div>
-                    <div class="details">
-                        <div class="name">오늘 저녁</div>
-                        <div class="money">10000</div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-item">
-                <div class="card">
-                    <div class="thumbnail">
-                        <img src="https://unsplash.it/200/200?random=#{random}"/>
-                        <div class="tumbInfo">
-                            식비
-                        </div>
-                    </div>
-                    <div class="details">
-                        <div class="name">오늘 저녁</div>
-                        <div class="money">10000</div>
-                    </div>
-                </div>
-            </li>
+            </li> -->
          </ul>
     </div>
 </body>
 </html>
+<!-- 
+
+<li class="list-item">
+    <div class="card">
+        <div class="thumbnail">
+            <div class="tumbImg" style="background: X;"></div>
+            <div class="tumbInfo">
+                식비
+            </div>
+        </div>
+        <div class="details">
+            <div class="name">오늘 저녁</div>
+            <div class="money">10000</div>
+        </div>
+    </div>
+</li> -->
+
+
+
+
+<!-- document.write("\
+                        <li class=\"list-item\" data-id =\""
+                        +paymentID+
+                        "\">\n\
+                                    <div class=\"card\">\n\
+                                        <div class=\"thumbnail\">\n\
+                                            <div class=\"tumbImg\" style=\"background: "
+                                            + categoryColor +
+                                            ";\"></div>\n\
+                                            <div class=\"tumbInfo\">"
+                                                + paymentCategory +   
+                                            "</div>\n\
+                                        </div>\n\
+                                        <div class=\"details\">\n\
+                                            <div class=\"name\">"
+                                            + paymentName +
+                                            "</div>\n\
+                                            <div class=\"money\">"
+                                            + paymentAmount +
+                                            "</div>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                </li>"); -->
+
+
+                                <!-- document.write("\
+                        <div class=\"screen list-view\">\n\
+                                <ul class=\"list-ul\">");
+                                    document.write("\
+<li class=\"list-item\">\n\
+    <div class=\"card\">\n\
+        <div class=\"thumbnail\">\n\
+            <div class=\"tumbImg\" style=\"background: X;\"></div>\n\
+            <div class=\"tumbInfo\">\n\
+                식비\n\
+            </div>\n\
+        </div>\n\
+        <div class=\"details\">\n\
+            <div class=\"name\">오늘 저녁</div>\n\
+            <div class=\"money\">10000</div>\n\
+        </div>\n\
+    </div>");
+        document.write("\
+                        </ul>\n\
+                            </div>"); -->
