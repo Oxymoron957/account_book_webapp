@@ -242,19 +242,19 @@
 
               function B(){
                 console.log(test);
-                // var updateSQL = 'update auto set type=? where name = ?';
-                // tr.executeSql(updateSQL,["처리 후",changeName],function(tr,rs){
-                //   console.log("auto 초기화 완료");
-                // });
+                var updateSQL = 'update auto set type=? where name = ?';
+                tr.executeSql(updateSQL,["처리 후",changeName],function(tr,rs){
+                  console.log("auto 초기화 완료");
+                });
 
-                // var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
+                var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
           
-                // tr.executeSql(insertSQL,[changeName,'testC',2021,5,25,9999], function(tr,rs){
-                // console.log('no: ' + rs.insertId);
-                // }, function(tr,err){
-                //   console.log('DB오류'+err.message+err.code);
-                // }
-                // );
+                tr.executeSql(insertSQL,[changeName,'testC',2021,5,25,9999], function(tr,rs){
+                console.log('no: ' + rs.insertId);
+                }, function(tr,err){
+                  console.log('DB오류'+err.message+err.code);
+                }
+                );
               }
               A(B);
               //name text, category text, year integer, month integer, day integer, amount integer

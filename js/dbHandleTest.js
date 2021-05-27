@@ -248,7 +248,50 @@ function readCategoryPayment(category){
             for(var i=0;i<paymentID.length;i++)
             {
                 console.log(paymentID[i]);
-                $("#list-ul").append("<li>test</li>");
+
+                let list = document.createElement('li');
+                list.className="list-item";
+                list.setAttribute('data-id',paymentID[i]);
+
+                let card = document.createElement('div');
+                card.className="card";
+
+                let thumbnail = document.createElement('div');
+                thumbnail.className="thumbnail";
+
+                let tumbImg = document.createElement('div');
+                tumbImg.className = "tumbImg";
+                tumbImg.style.background = categoryColor[i];
+
+                let tumbInfo = document.createElement('div');
+                tumbInfo.className = "tumbInfo";
+                tumbInfo.innerText = paymentCategory[i];
+
+                thumbnail.appendChild(tumbImg);
+                thumbnail.appendChild(tumbInfo);
+
+                let details = document.createElement('div');
+                details.className = "details";
+
+                let name = document.createElement('div');
+                name.className = "name";
+                name.innerText = paymentName[i];
+
+                let money = document.createElement('div');
+                money.className = "money";
+                money.innerText = paymentAmount[i];
+
+                details.appendChild(name);
+                details.appendChild(money);
+
+                card.appendChild(thumbnail);
+                card.appendChild(details);
+
+                list.appendChild(card);
+                
+                document.getElementById("list-ul").appendChild(list);
+
+                // $("#list-ul").append("<li>test</li>");
                 // $("#list-ul").append("<li class=\"list-item\" data-id =\""
                 // +paymentID[i]+
                 // "\">\n\
