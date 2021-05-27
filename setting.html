@@ -76,7 +76,7 @@
           //자동 입출금 테이블 만들기
           function createTableAuto() {
             db.transaction(function(tr){
-            var createSQL = 'create table if not exists auto(name text, type text, category text, day number, amount integer)';      
+            var createSQL = 'create table if not exists auto(id integer primary key autoincrement, name text, type text, category text, day number, amount integer, update integer)';      
             tr.executeSql(createSQL, [], function(){
               console.log('자동입출금 테이블 생성 sql 실행 성공');
             },function(){
@@ -101,9 +101,9 @@
             var newFlag="완료";
             var newDay=1;
             var amount=0;
-
-            var insertSQL = 'insert into auto(name,type,category,day,amount) values(?,?,?,?,?)';
-            tr.executeSql(insertSQL,[newName,newFlag,newCategory,newDay,amount],function(tr,rs){
+            var month = new Date().getMonth()+1;
+            var insertSQL = 'insert into auto(name,type,category,day,amount,update) values(?,?,?,?,?,?)';
+            tr.executeSql(insertSQL,[newName,newFlag,newCategory,newDay,amount,month],function(tr,rs){
             console.log('예산 업댓');
         });
     });
@@ -203,11 +203,18 @@
           //자동입출금 payment에 날짜에 따라 반영하기
           function insertAutoToDB(){
             var changeName;
+            const id = [];
+            const name = [];
+            const category = [];
+            const amount = [];
+            const autoDay = [];
+
             db.transaction(function(tr){
               var today=new Date();
               var day=today.getDate();
-              var month=today.getMonth();
+              var month=today.getMonth()+1;
               var year=today.getFullYear();
+
               console.log(day);
               
               selectSQL='select * from auto';
@@ -219,12 +226,11 @@
                 {
                   if((day>=rs.rows.item(i).day)&&(rs.rows.item(i).type==='처리 전'))
                   {
-                    var name=rs.rows.item(i).name;
-                    var category=rs.rows.item(i).category;
-                    var amount=rs.rows.item(i).amount;
-                    console.log(rs.rows.item(i));
-                    changeName = name;
-
+                    id[i] = rs.rows.item(i).id;
+                    name[i] = rs.rows.item(i).name;
+                    category[i] = rs.rows.item(i).category;
+                    amount[i] = rs.rows.item(i).amount;
+                    autoDay[i] = rs.rows.item(i).day;
                     // var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
                     // tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
                       
@@ -242,19 +248,23 @@
 
               function B(){
                 console.log(test);
-                var updateSQL = 'update auto set type=? where name = ?';
-                tr.executeSql(updateSQL,["처리 후",changeName],function(tr,rs){
-                  console.log("auto 초기화 완료");
-                });
+                var updateSQL = 'update auto set type=? where id = ?';
+                for(var i=0;i<id.length;i++){
+                  tr.executeSql(updateSQL,["처리 후",id[i]],function(tr,rs){
+                  // console.log("auto 초기화 완료");
+                  });
+                }
 
                 var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
-          
-                tr.executeSql(insertSQL,[changeName,'testC',2021,5,25,9999], function(tr,rs){
-                console.log('no: ' + rs.insertId);
-                }, function(tr,err){
-                  console.log('DB오류'+err.message+err.code);
+                for(var i=0;i<id.length;i++){  
+                  tr.executeSql(insertSQL,[name[i],category[i],year,month,autoDay[i],amount[i]], function(tr,rs){
+                  console.log('no: ' + rs.insertId);
+                  }, function(tr,err){
+                    console.log('DB오류'+err.message+err.code);
+                  }
+                  );
                 }
-                );
+                
               }
               A(B);
               //name text, category text, year integer, month integer, day integer, amount integer
