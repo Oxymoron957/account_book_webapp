@@ -30,7 +30,7 @@
 
           //데베 만들기
           function openDB(){
-            db = window.openDatabase('paymentDB','1.0','가계부DB',1024*1024*5);
+            db = window.openDatabase('paymentDB2','1.0','가계부DB',1024*1024*5);
             console.log('DB 생성');
           }
           
@@ -72,14 +72,15 @@
 
           //#########################카테고리##############################
 
-
+            
           //자동 입출금 테이블 만들기
           function createTableAuto() {
             db.transaction(function(tr){
-            var createSQL = 'create table if not exists auto(id integer primary key autoincrement, name text, type text, category text, day number, amount integer, update integer)';      
+            var createSQL = 'create table if not exists auto(id integer primary key autoincrement , name text, type text, category text, day integer, amount integer, updatemonth integer)';      
             tr.executeSql(createSQL, [], function(){
               console.log('자동입출금 테이블 생성 sql 실행 성공');
             },function(){
+              // console.log(err.message);
               console.log('자동입출금 테이블 생성 sql 실행 실패');
             });
             }, function(){
@@ -102,7 +103,7 @@
             var newDay=1;
             var amount=0;
             var month = new Date().getMonth()+1;
-            var insertSQL = 'insert into auto(name,type,category,day,amount,update) values(?,?,?,?,?,?)';
+            var insertSQL = 'insert into auto(name,type,category,day,amount,updatemonth) values(?,?,?,?,?,?)';
             tr.executeSql(insertSQL,[newName,newFlag,newCategory,newDay,amount,month],function(tr,rs){
             console.log('예산 업댓');
         });
@@ -146,14 +147,15 @@
               console.log("type"+type+"  category"+category+name);
               var day=$('#dateAuto').val();
               var amount=$('#inputAuto').val();
+              var updateMonth = new Date().getMonth()+1;
               if(target.options[target.selectedIndex].text=="출금")
               {
                 
                 amount=amount*(-1);
               }
-              var insertSQL = 'insert into auto(name,type,category,day,amount) values(?,?,?,?,?)';
-        
-              tr.executeSql(insertSQL,[name,type,category,day,amount], function(tr,rs){
+              var insertSQL = 'insert into auto(name,type,category,day,amount,updatemonth) values(?,?,?,?,?,?)';
+              console.log("insert?");
+              tr.executeSql(insertSQL,[name,type,category,day,amount,updateMonth], function(tr,rs){
               console.log('no: ' + rs.insertId);
               }, function(tr,err){
                 console.log('DB오류'+err.message+err.code);
@@ -203,11 +205,7 @@
           //자동입출금 payment에 날짜에 따라 반영하기
           function insertAutoToDB(){
             var changeName;
-            const id = [];
-            const name = [];
-            const category = [];
-            const amount = [];
-            const autoDay = [];
+            
 
             db.transaction(function(tr){
               var today=new Date();
@@ -215,17 +213,25 @@
               var month=today.getMonth()+1;
               var year=today.getFullYear();
 
+              const id = [];
+              const name = [];
+              const category = [];
+              const amount = [];
+              const autoDay = [];
+
               console.log(day);
               
               selectSQL='select * from auto';
               var test='no';
               function A(callback){
                 tr.executeSql(selectSQL, [], function(tr,rs){
-                  test='yes';
+                  
                   for(var i=0;i<rs.rows.length;i++)
                 {
                   if((day>=rs.rows.item(i).day)&&(rs.rows.item(i).type==='처리 전'))
                   {
+                    test='yes';
+                    console.log(rs.rows.item(i).id);
                     id[i] = rs.rows.item(i).id;
                     name[i] = rs.rows.item(i).name;
                     category[i] = rs.rows.item(i).category;
@@ -242,27 +248,32 @@
                     
                   }
                 }
-                callback();
+                callback(id,name,category,amount,autoDay);
               });
               }
 
-              function B(){
+              function B(id,name,category,amount,autoDay){
                 console.log(test);
-                var updateSQL = 'update auto set type=?,update=? where id = ?';
+                console.log(id);
+                var updateSQL = 'update auto set type=?,updatemonth=? where id = ?';
                 for(var i=0;i<id.length;i++){
-                  tr.executeSql(updateSQL,["처리 후",month,id[i]],function(tr,rs){
-                  // console.log("auto 초기화 완료");
-                  });
+                  if(id[i] != undefined){
+                    tr.executeSql(updateSQL,["처리 후",month,id[i]],function(tr,rs){
+                    console.log("auto 초기화 완료");
+                    });
+                  }
                 }
 
                 var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
-                for(var i=0;i<id.length;i++){  
-                  tr.executeSql(insertSQL,[name[i],category[i],year,month,autoDay[i],amount[i]], function(tr,rs){
-                  console.log('no: ' + rs.insertId);
-                  }, function(tr,err){
-                    console.log('DB오류'+err.message+err.code);
+                for(var i=0;i<id.length;i++){
+                  if(id[i]!=undefined){
+                    tr.executeSql(insertSQL,[name[i],category[i],year,month,autoDay[i],amount[i]], function(tr,rs){
+                    console.log('no: ' + rs.insertId);
+                    }, function(tr,err){
+                      console.log('DB오류'+err.message+err.code);
+                    }
+                    );
                   }
-                  );
                 }
                 
               }
@@ -290,7 +301,7 @@
                   test='yes';
                   for(var i=0;i<rs.rows.length;i++)
                   {
-                    if((month!=rs.rows.item(i).update)&&(rs.rows.item(i).type==='처리 후'))
+                    if((month!=rs.rows.item(i).updatemonth)&&(rs.rows.item(i).type==='처리 후'))
                     {
                       id[i] = rs.rows.item(i).id;
                     }
