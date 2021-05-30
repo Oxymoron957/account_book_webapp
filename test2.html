@@ -44,23 +44,18 @@
                 
             readCategoryPaymentAmountSum_All(category);
             readCategoryPayment(category);
+            createCatIcon(); //카테고리 테이블에서 불러와 동그라미 생성해줌
     
         });
     </script>
 </head>
 <body>
   <div data-role="page" id="main" style="background-image: radial-gradient(circle 248px at center, #e7f4fd 0%, #e7f4fd 47%, #e7f4fd 100%)">
-    <div id="menuToggle">
-      <input type="checkbox" id="M"/>
-  
-      <span></span>
-      <span></span>
-      <span></span>
-
-      <ul id="menu">
-        <a href="main.html"><li>Home</li></a> 
-        <a href="setting.html"><li>Setting</li></a>
-      </ul>
+    <!--  -->
+  <div class="categoryButton" onClick="location.href='#category';">
+    <!-- <div class="circle-button" id="circleDrop"> -->
+        C
+    <!-- </div> -->
   </div>
   
   
@@ -92,8 +87,17 @@
         <ul id="list-ul">
          </ul>
     </div>
-</div>
-</div>
+    </div> <!-- /inform -->
+  </div> <!-- main page -->
+
+  <div data-role="page" id="category">
+    <div data-role="header"data-position="fixed">
+      <a href="#main" data-role="button" data-icon="back"  data-iconpos="notext" style="margin-top: 10px;"></a>
+      <h1 style="font-size:19px">카테고리 관리</h1>
+    </div>
+    <div data-role="content" id="catIcons">
+      </div>
+  </div> <!-- category page -->
 </body>
 </html>
 

@@ -145,7 +145,7 @@
  
  
  
- .category {
+ .categoryButton {
    position: fixed;
    right: 5%;
    top: 2%;
@@ -153,15 +153,16 @@
    height: 50px;
    text-align: center;
    vertical-align: middle;
-   font-size: 1.5em;
+   font-size: 35px;
    color: #fff;
    background: rgb(74, 128, 228);
    border: none;
    border-radius: 50%;
-   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.275);
+   z-index: 3;
+   /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.275); */
    /* outline: none; */
-   cursor: pointer;
-   transition: all 300ms ease;
+   /* cursor: pointer; */
+   /* transition: all 300ms ease; */
  }
  /* .circle-button .close {
    transition: transform 400ms ease;

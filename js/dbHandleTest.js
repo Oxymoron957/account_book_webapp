@@ -388,7 +388,6 @@ function readCategoryPaymentAmountSum_All(category){
                     data: {
                         labels: [label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12],
                         datasets: [{
-                        label: '월별 소비액',
                         backgroundColor: 'transparent',
                         //   backgroundColor: 'black',
                         borderColor: 'blue',
@@ -397,13 +396,17 @@ function readCategoryPaymentAmountSum_All(category){
                     },
                     options: {
                         responsive: false,
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                            },
+                        // scales: {
+                        //     yAxes: [{
+                        //         ticks: {
+                        //             beginAtZero: true
+                        //         }
+                        //     }]
+                        //     },
+                        legend:{
+                            display:false
+                        },
+                        
                     }
                     });
 
@@ -433,7 +436,7 @@ function readCategoryPaymentAmountSum_All(category){
                     data: {
                         labels: [label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12],
                         datasets: [{
-                        label: '월별 소비액',
+                        // label: '월별 소비액',
                         backgroundColor: 'transparent',
                         //   backgroundColor: 'black',
                         borderColor: 'blue',
@@ -442,13 +445,17 @@ function readCategoryPaymentAmountSum_All(category){
                     },
                     options: {
                         responsive: false,
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                            },
+                        // scales: {
+                        //     yAxes: [{
+                        //         ticks: {
+                        //             beginAtZero: true
+                        //         }
+                        //     }]
+                        //     },
+                        legend:{
+                            display:false
+                        },
+                        
                     }
                     });
             });
@@ -490,3 +497,45 @@ function recentPayments() {
 
 // 수입 테이블 관리 (insert, update, select)
 // 초기예산+ 각 수입
+
+function createCatIcon(){
+    db.transaction(function(tr){
+      var selectSQL='select * from category';
+      tr.executeSql(selectSQL,[],function(tr,rs){
+        //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
+        $('<div class="dot-wrap" id="dot-wrap">').appendTo('#catIcons');
+          var target=document.getElementById('#dot-wrap');
+        //   $(target).css({
+        //     "width":"360px",
+        //     "margin":0, auto});
+
+        //정보 하나씩 불러옴
+        for(var i=0;i<rs.rows.length;i++)
+        {
+          var catName=rs.rows.item(i).name;
+          var catColor=rs.rows.item(i).color;
+          //span 하나씩 추가
+          $('<span style="border:3px solid black; background-color:'+catColor+' "><p style="font-size:13px; margin-top:-15px;">'+catName+'</p></span>').appendTo('#catIcons');
+          var target2=document.getElementsByTagName('span');
+          //현재 span의 css스타일 설정해줌
+          $(target2).css({        
+            "width":"60px",
+            "height":"60px",
+            "margin-right":"3px",
+            "margin-left":"3px",
+            "align-items": "center",
+            "border-radius":"50%",
+            "font-weight":"bold",
+            "text-align":"center",
+            "line-height":"200px",
+            "float":"left",
+            "margin-top": "50px",
+            "margin-left":"20px",
+            "margin-right":"20px",
+            "margin-bottom":"30px"});
+          }
+          //catIcons라는 카테고리 페이지의 content부분에 넣음
+          $('</div>').appendTo('#catIcons');
+      });
+    });
+  }
