@@ -29,7 +29,9 @@
   }
   
   .list-view .list-item .card .thumbnail {
-    width: 30%;
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 20%;
     text-align: center;
   }
   
@@ -39,14 +41,14 @@
     color: black;
     border-radius: 99px;
     text-align: center; */
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     background:black; 
     border-radius: 50%;
   }
 
   .list-view .list-item .card .thumbnail .tumbInfo {
-    font-size:12px;
+    font-size:10px;
     top: 0%;
     margin: 0%;
     border: 0%;
@@ -60,20 +62,15 @@
     border: 0%;
   }
   .list-view .list-item .card .details .name {
-    font-size: 12px;
-    top: 0%;
-    margin: 0%;
-    border: 0%;
+    font-size: 20px;
+    margin-top: 20px;
     text-align: center;
-  }
-  .list-view .list-item .card .details > *:not(.name) {
-    /* opacity: 0.6; */
   }
   
   .list-view .list-item .card .details .money {
     top: 0%;
-    margin: 0%;
+    margin-top: 10px;
     border: 0%;
-    font-size: 50px;
+    font-size: 40px;
     text-align: center;
   }
