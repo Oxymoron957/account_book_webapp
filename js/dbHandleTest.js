@@ -198,10 +198,10 @@ function readCategoryPayment(category){
         function A(callback){
         var selectSQL;
         var year = new Date().getFullYear();
-        var month = new Date().getMonth()+1;
+        var month = new Date().getMonth();
         test='yest'
-        // if(category==='all')
-        // {
+        if(category==='all')
+        {
             selectSQL = 'select payment.id, payment.name,payment.category,payment.day,payment.amount,category.color from payment join category on payment.category=category.name where payment.year =? and payment.month = ? order by payment.day desc';
             tr.executeSql(selectSQL, [year,month], function(tr,rs){
                 console.log('지출 내역 조회' + rs.rows.length+'건');
@@ -219,25 +219,26 @@ function readCategoryPayment(category){
                 callback(paymentID,categoryColor,paymentCategory,paymentName,paymentAmount);
             });
             
-        // }
-        // else
-        // {
-        //     selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
-        //     tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
-        //         console.log('지출 내역 조회' + rs.rows.length+'건');
-        //         test='yes';
-        //         for(var i=0;i<rs.rows.length;i++)
-        //         {
+        }
+        else
+        {
+            selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
+            tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
+                console.log('지출 내역 조회' + rs.rows.length+'건');
+                test='yes';
+                for(var i=0;i<rs.rows.length;i++)
+                {
                     
-        //             paymentID[i] = rs.rows.item(i).id;
-        //             paymentName[i] = rs.rows.item(i).name;
-        //             paymentCategory[i] = rs.rows.item(i).category;
-        //             // paymentDay[i] = rs.rows.item(i).day;
-        //             paymentAmount[i] = rs.rows.item(i).amount;
-        //             categoryColor[i] = rs.rows.item(i).color;
-        //         }
-        //     });
-        // }
+                    paymentID[i] = rs.rows.item(i).id;
+                    paymentName[i] = rs.rows.item(i).name;
+                    paymentCategory[i] = rs.rows.item(i).category;
+                    // paymentDay[i] = rs.rows.item(i).day;
+                    paymentAmount[i] = rs.rows.item(i).amount;
+                    categoryColor[i] = rs.rows.item(i).color;
+                }
+                callback(paymentID,categoryColor,paymentCategory,paymentName,paymentAmount);
+            });
+        }
             
         }
         
@@ -498,44 +499,80 @@ function recentPayments() {
 // 수입 테이블 관리 (insert, update, select)
 // 초기예산+ 각 수입
 
-function createCatIcon(){
+function createCatIcon(callback){
+    // document.getElementById('catIcons').onclick = function(){
+    //     var categoryCircles = document.getElementsByClassName('dot-wrap2');
+    //     for(var i=0;i<categoryCircles.length;i++)
+    //     {
+    //         var categoryCircle = categoryCircles[i];
+            
+    //         categoryCircle.onclick = function() {
+    //             console.log(categoryCircle);
+    //         }
+    //     }
+        
+    // };
     db.transaction(function(tr){
       var selectSQL='select * from category';
-      tr.executeSql(selectSQL,[],function(tr,rs){
-        //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
-        $('<div class="dot-wrap" id="dot-wrap">').appendTo('#catIcons');
-          var target=document.getElementById('#dot-wrap');
-        //   $(target).css({
-        //     "width":"360px",
-        //     "margin":0, auto});
 
-        //정보 하나씩 불러옴
-        for(var i=0;i<rs.rows.length;i++)
+      function setCategory(callback){
+        tr.executeSql(selectSQL,[],function(tr,rs){
+            //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
+            $('<div class="dot-wrap" id="dot-wrap">').appendTo('#catIcons');
+            //   var target=document.getElementById('#dot-wrap');
+    
+            //정보 하나씩 불러옴
+            for(var i=0;i<rs.rows.length;i++)
+            {
+              var catName=rs.rows.item(i).name;
+              var catColor=rs.rows.item(i).color;
+              
+              //span 하나씩 추가
+              $('<span class="dot-wrap2" data-name='+ catName+'; style="border:3px solid black; background-color:'+catColor+' "><p style="font-size:13px; margin-top:-15px;">'+catName+'</p></span>').appendTo('#catIcons');
+              var target2=document.getElementsByTagName('span');
+              //현재 span의 css스타일 설정해줌
+              $(target2).css({        
+                "width":"60px",
+                "height":"60px",
+                "margin-right":"3px",
+                "margin-left":"3px",
+                "align-items": "center",
+                "border-radius":"50%",
+                "font-weight":"bold",
+                "text-align":"center",
+                "line-height":"200px",
+                "float":"left",
+                "margin-top": "50px",
+                "margin-left":"20px",
+                "margin-right":"20px",
+                "margin-bottom":"30px"});
+              }
+              //catIcons라는 카테고리 페이지의 content부분에 넣음
+              $('</div>').appendTo('#catIcons');
+            
+              callback();
+          });
+          
+      }
+
+      function addClick(){
+        var circles = document.getElementsByClassName('dot-wrap2');
+        for(var i=0;i<circles.length;i++)
         {
-          var catName=rs.rows.item(i).name;
-          var catColor=rs.rows.item(i).color;
-          //span 하나씩 추가
-          $('<span style="border:3px solid black; background-color:'+catColor+' "><p style="font-size:13px; margin-top:-15px;">'+catName+'</p></span>').appendTo('#catIcons');
-          var target2=document.getElementsByTagName('span');
-          //현재 span의 css스타일 설정해줌
-          $(target2).css({        
-            "width":"60px",
-            "height":"60px",
-            "margin-right":"3px",
-            "margin-left":"3px",
-            "align-items": "center",
-            "border-radius":"50%",
-            "font-weight":"bold",
-            "text-align":"center",
-            "line-height":"200px",
-            "float":"left",
-            "margin-top": "50px",
-            "margin-left":"20px",
-            "margin-right":"20px",
-            "margin-bottom":"30px"});
-          }
-          //catIcons라는 카테고리 페이지의 content부분에 넣음
-          $('</div>').appendTo('#catIcons');
-      });
-    });
-  }
+            var circle = circles[i];
+            circle.addEventListener('click',myFunction,false);
+        }
+    }
+
+      setCategory(addClick); 
+    }); 
+}
+
+function myFunction(){
+    
+    var X = $(this).data('name');
+    var catName = X.substr(0,X.length-1);
+    console.log(catName);
+    readCategoryPayment(catName);
+
+}

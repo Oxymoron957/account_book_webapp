@@ -79,3 +79,8 @@ a{
 .signlogo{border-radius: 50%;width:40px;height: 40px;background-color: #000;float: left;margin-top:37px;margin-right: 20px}
 .columfont{line-height: 105px;font-size: 44px;}
 .columfont2{line-height: 105px;font-size: 38px;} */
+
+.dot-wrap{
+	width: 360px;
+	margin: auto;
+}
