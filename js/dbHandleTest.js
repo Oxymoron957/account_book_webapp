@@ -212,7 +212,7 @@ function readCategoryPayment(category){
                     paymentID[i] = rs.rows.item(i).id;
                     paymentName[i] = rs.rows.item(i).name;
                     paymentCategory[i] = rs.rows.item(i).category;
-                    paymentDay[i] = rs.rows.item(i).day;
+                    // paymentDay[i] = rs.rows.item(i).day;
                     paymentAmount[i] = rs.rows.item(i).amount;
                     categoryColor[i] = rs.rows.item(i).color;
                 }
@@ -222,13 +222,17 @@ function readCategoryPayment(category){
         }
         else
         {
-            selectSQL = 'select * from payment where year =? and month = ? and category = ? order by day desc';
+            selectSQL = 'select payment.id, payment.name,payment.category,payment.day,payment.amount,category.color from payment join category on payment.category=category.name where payment.year =? and payment.month = ?  and payment.category = ? order by payment.day desc';
+            
+            console.log(category);
             tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
+                
                 console.log('지출 내역 조회' + rs.rows.length+'건');
                 test='yes';
+                
                 for(var i=0;i<rs.rows.length;i++)
                 {
-                    
+                    console.log(rs.rows.item(i));
                     paymentID[i] = rs.rows.item(i).id;
                     paymentName[i] = rs.rows.item(i).name;
                     paymentCategory[i] = rs.rows.item(i).category;
@@ -243,7 +247,12 @@ function readCategoryPayment(category){
         }
         
         function B(paymentID,categoryColor,paymentCategory,paymentName,paymentAmount){
-    
+            const ul = document.getElementById('list-ul');
+            const li = ul.getElementsByTagName('li');
+            for(var i=li.length-1;i>=0;i--)
+            {
+                li[i].remove();
+            }
             console.log(test);
             console.log(paymentID.length);
             for(var i=0;i<paymentID.length;i++)
