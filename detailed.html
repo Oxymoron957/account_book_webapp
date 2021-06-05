@@ -5,14 +5,19 @@
 <title>명세</title>
 
 <link rel="stylesheet" href="css/graph_2.css">
+<script  src="js/jquery.min.js"></script>
 
+<script src="js/paymentDB.js"></script>
 </head>
 <body>
 <div class="inform">
-	<div class="back"><a onClick="history.go(-1)"><img src="./img/back.png" height="80px" width="80px"></a></div>
+	<div class="back"><a href="graph_2.html"><img src="./img/back.png" height="80px" width="80px"></a></div>
 	<div class="detailedmonth">2021년01월</div>
-	<div class="columname">쇼핑</div>
-	<div class="columdetailed">
+	<div class="columname">명세</div>
+	<div class="columdetailed-Warpper">
+
+	</div>
+	<!-- <div class="columdetailed1">
 		<div class="name2 columfont">옷</div>
 		<div class="time columfont2">2021년01월01일 17:00</div>
 		<div class="money columfont">5000원</div>
@@ -46,7 +51,29 @@
 		<div class="money columfont">5000원</div>
 		<div class="signlogo"></div>
 		<div class="sign columfont">비고</div>
-	</div>
+	</div> -->
 </div>
+<script type="text/javascript">
+	$(document).ready(function(){	
+		// 获取url 参数
+		function GetRequest() {
+			var url = location.search; //获取url中"?"符后的字串
+			var theRequest = new Object();
+			if (url.indexOf("?") != -1) {
+				var str = url.substr(1);
+				strs = str.split("&");
+				for (var i = 0; i < strs.length; i++) {
+					theRequest[strs[i].split("=")[0]] = decodeURIComponent(strs[i].split("=")[1]);
+				}
+			}
+			return theRequest;
+    	}
+		let arr = GetRequest()
+		openDB();  
+		readCategoryPayment('det', undefined, arr.month, arr.category)
+		console.log(arr);
+	});
+	
+	</script>
 </body>
 </html>

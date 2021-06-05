@@ -1,0 +1,192 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+	background-image: radial-gradient(circle 248px at center, #e7f4fd 0%, #e7f4fd 47%, #e7f4fd 100%);
+	
+}
+
+nav {
+    overflow: hidden;
+    position: relative;
+    transform: translateX(-300px);
+    height: 100%;
+    width: 400px;
+    transition: all 800ms cubic-bezier(.8, 0, .33, 1);
+    border-radius: 0% 0% 100% 50%;
+}
+
+nav.nav-open {
+    transform: translateX(0px);
+    border-radius: 0% 0% 0% 0%;
+	background: #ffffff66;
+    z-index: 999;
+}
+.menu{font-size: 1.85rem;width:50px;
+
+}
+
+
+nav .menu-btn {
+    position: absolute;
+    top: 2%;
+    right: 15%;
+    padding: 0;
+    width: 30px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+nav .menu-btn .line {
+    padding: 0;
+    width: 30px;
+    background: #000;
+    height: 2px;
+    margin: 15px 0;
+    margin-left:25px;
+    transition: all 700ms cubic-bezier(.9, 0, .33, 1);
+}
+
+nav .menu-btn .line.line--1 {
+    width: 50px;
+    transform: rotate(0) translateY(0);
+}
+
+nav .menu-btn .line.line--1.line-cross {
+    width: 65px;
+    transform: rotate(45deg) translateY(24px);
+	 background: rgba(0,0,0,0.6);
+}
+
+nav .menu-btn .line.line--2 {
+    width: 48px;
+    transform: translateX(0);
+}
+
+nav .menu-btn .line.line--2.line-fade-out {
+    width: 88px;
+    transform: translate(40px);
+    opacity: 0;
+}
+
+nav .menu-btn .line.line--3 {
+    width: 50px;
+    transform: rotate(0) translateY(0);
+}
+
+nav .menu-btn .line.line--3.line-cross {
+    width: 65px;
+    transform: rotate(-45deg) translateY(-24px);
+	 background: rgba(0,0,0,0.6);
+}
+
+nav .nav-links {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(-100px);
+    opacity: 0;
+    transition: all 900ms cubic-bezier(.9, 0, .33, 1);
+}
+
+nav .nav-links.fade-in {
+    opacity: 1;
+    transform: translateX(0px);
+}
+
+nav .nav-links .link {
+    margin: 20px 0;
+    text-decoration: none;
+    font-family: sans-serif;
+    color: rgba(0,0,0,0.9);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 2.5rem;
+    transition: all 300ms cubic-bezier(.9, 0, .33, 1);
+}
+
+nav .nav-links .link:hover {
+    color: rgba(0, 0, 0, .5);
+}
+
+
+.inform{
+	position: absolute;
+	top: 5%;
+	left: 0%;
+	font-size: 2rem;
+    z-index: 1
+}
+
+a{
+	margin: 0 0px;
+	color: #000;
+	font-size: 2rem;
+	transition: all 400ms ease;
+}
+
+a:hover{color: #000;text-decoration:none}
+a:visited{text-decoration:none}
+a:active{text-decoration:none}
+a:link{text-decoration:none}
+
+.month{margin-left:38%;width:400px;height: 100px;border:4px solid #000;}
+.monthselect{border-left:0px solid #000;border-right:0px solid #000;margin-left:50px;width:292px;height: 92px;font-size: 50px;text-align:center;background-image: radial-gradient(circle 248px at center, #e7f4fd 0%, #e7f4fd 47%, #e7f4fd 100%);}
+.monthoption{font-size: 20px;width:292px;}
+
+
+.graphicalbutton{margin-left:38%;margin-top:3%;width:400px;height: 100px;border:0px solid #000;}
+.brokenline{margin-left:0%;width:175px;height: 80px;border:4px solid #000;float:left;line-height: 72px;font-size: 44px;text-align:center;}
+.circular{margin-left:12%;width:175px;height: 80px;border:4px solid #000;float:left;line-height: 72px;font-size: 44px;text-align:center;}
+
+.detailed{margin-left:12%;margin-top:1%;width:800px;height: 1200px;border:4px solid #000;}
+.graphical{margin-left:0%;margin-top:0%;width:798px;height: 700px;border:0px solid #000;}
+.databar{margin-left:2%;margin-top:1%;width:700px;height: 100px;border:0px solid #000;}
+.logo{margin:10px;width:80px;height: 80px;float: left;}
+.databarbig{width:590px;height: 100px;border:0px solid #000;float: left;}
+.databarmini{margin:5px;width:580px;height: 40px;border:0px solid #000;}
+.name{width:120px;height: 40px;float: left;}
+.proportion{width:280px;height: 40px;float: left;}
+.data{width:160px;height: 40px;float: left;}
+
+.dataprogressbar{margin:5px;width:580px;height: 30px;border:3px solid #000;}
+.dataprogressdetailedbar{height: 24px;}
+.detailedbarcolor1{width:400px;background-color: #37a7e1}
+.detailedbarcolor2{width:300px;background-color: #dacb64}
+.detailedbarcolor3{width:200px;background-color: #10832e}
+.detailedbarcolor4{width:100px;background-color: #dd7bac}
+
+.logofont {font-size: 44px;color: #000}
+.logofont:hover{font-size: 44px;color: #000;text-decoration:none}
+.logofont:visited{font-size: 44px;color: #000;text-decoration:none}
+.logofont:link{font-size: 44px;color: #000;text-decoration:none}
+.logofont:active{font-size: 44px;color: #000;text-decoration:none}
+
+
+.back{width:80px;height: 80px;margin-top:-50px;margin-left: 30px;float: left;}
+.detailedmonth{width:680px;height: 80px;margin-top:-50px;margin-left: 30px;float: left;font-size: 64px;text-align:center;font-weight:900}
+.columname{width:200px;height: 80px;margin-top:120px;margin-left: 140px;float: left;font-size: 44px;font-weight:900;}
+.columdetailed{margin-left:10%;margin-top:250px;width:800px;height: 230px;border:4px solid #000;padding-left:40px;}
+.columdetailed1{margin-left:10%;margin-top:80px;width:800px;height: 230px;border:4px solid #000;padding-left:40px;}
+.name2{margin:5px;width:290px;height: 105px;border:0px solid #000;float: left;}
+.time{margin:5px;width:430px;height: 105px;border:0px solid #000;float: left;}
+.money{margin:5px;width:390px;height: 105px;border:0px solid #000;float: left;}
+.sign{margin:5px;width:180px;height: 105px;border:0px solid #000;float: left;}
+.signlogo{border-radius: 50%;width:40px;height: 40px;background-color: #000;float: left;margin-top:37px;margin-right: 20px}
+.columfont{line-height: 105px;font-size: 44px;}
+.columfont2{line-height: 105px;font-size: 38px;}

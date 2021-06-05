@@ -1,0 +1,97 @@
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    background: black;
+	background-image: radial-gradient(circle 248px at center, #e7f4fd 0%, #e7f4fd 47%, #e7f4fd 100%);
+	
+}
+
+
+.inform{
+	width: 100%;
+	
+	/* position: absolute; */
+	top: 5%;
+	left: 0%;
+	font-size: 2rem;
+    z-index: 1
+	
+}
+
+.inform .monthselect{
+}
+
+select #monthselect{
+	width: 100%;
+	height: 20px;
+}
+.ui-select{
+	width: 100%;
+	height: 30px;
+}
+
+a{
+	margin: 0 0px;
+	color: #000;
+	font-size: 2rem;
+	transition: all 400ms ease;
+}
+
+.graphicalbutton{margin-left:5%;margin-top:20px;width:100%;height: 30px;border:0px solid #000;}
+.brokenline{margin-left:0%;width:40%;height: 100%;border:4px solid #000;float:left;line-height: 23px;font-size: 10px;text-align:center;}
+.circular{margin-left:10%;width:40%;height: 100%;border:4px solid #000;float:left;line-height: 23px;font-size: 10px;text-align:center;}
+
+.detailed{margin-left:5%;margin-top:22px;width:90%;height: 50%;border:4px solid #000;}
+
+.graphical{margin-left:5%;margin-right:5%;width:90%;height: 700px;border:0px solid #000;}
+.databar{margin-left:2%;margin-top:1%;width:700px;height: 100px;border:0px solid #000;}
+.logo{margin:10px;width:80px;height: 80px;float: left;}
+.databarbig{width:590px;height: 100px;border:0px solid #000;float: left;}
+.databarmini{margin:5px;width:580px;height: 40px;border:0px solid #000;}
+.name{width:120px;height: 40px;float: left;}
+.proportion{width:280px;height: 40px;float: left;}
+.data{width:160px;height: 40px;float: left;}
+
+/* .dataprogressbar{margin:5px;width:580px;height: 30px;border:3px solid #000;}
+.dataprogressdetailedbar{height: 24px;}
+.detailedbarcolor1{width:400px;background-color: #37a7e1}
+.detailedbarcolor2{width:300px;background-color: #dacb64}
+.detailedbarcolor3{width:200px;background-color: #10832e}
+.detailedbarcolor4{width:100px;background-color: #dd7bac} */
+
+.logofont {font-size: 20px;color: #000}
+/* .logofont:hover{font-size: 44px;color: #000;text-decoration:none}
+.logofont:visited{font-size: 44px;color: #000;text-decoration:none}
+.logofont:link{font-size: 44px;color: #000;text-decoration:none}
+.logofont:active{font-size: 44px;color: #000;text-decoration:none} */
+
+
+/* .back{width:80px;height: 80px;margin-top:-50px;margin-left: 30px;float: left;}
+.detailedmonth{width:680px;height: 80px;margin-top:-50px;margin-left: 30px;float: left;font-size: 64px;text-align:center;font-weight:900}
+.columname{width:200px;height: 80px;margin-top:120px;margin-left: 140px;float: left;font-size: 44px;font-weight:900;}
+.columdetailed{margin-left:10%;margin-top:250px;width:800px;height: 230px;border:4px solid #000;padding-left:40px;}
+.columdetailed1{margin-left:10%;margin-top:80px;width:800px;height: 230px;border:4px solid #000;padding-left:40px;}
+.name2{margin:5px;width:290px;height: 105px;border:0px solid #000;float: left;}
+.time{margin:5px;width:430px;height: 105px;border:0px solid #000;float: left;}
+.money{margin:5px;width:390px;height: 105px;border:0px solid #000;float: left;}
+.sign{margin:5px;width:180px;height: 105px;border:0px solid #000;float: left;}
+.signlogo{border-radius: 50%;width:40px;height: 40px;background-color: #000;float: left;margin-top:37px;margin-right: 20px}
+.columfont{line-height: 105px;font-size: 44px;}
+.columfont2{line-height: 105px;font-size: 38px;} */
+
+.dot-wrap{
+	width: 360px;
+	margin: auto;
+}

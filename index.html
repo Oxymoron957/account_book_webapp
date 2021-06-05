@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+    <header>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>main</title>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+        <script  src="js/jquery.min.js"></script>
+        <script  src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="./css/main.css"/>
+
+        <style>
+            /* 스타일 초기화 */
+            * { margin: 0px ; padding: 0px ; }
+        </style>
+
+        <script type="text/javascript" src="./js/security_check.js"></script>
+        <script>
+            jQuery.fn.center = function () {
+            this.css("position","absolute");
+            
+            this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) +
+            $(window).scrollLeft()) + "px");
+            return this;
+            }
+
+            
+            $(document).ready(function () {
+                if (!isPassword){
+                    location.href="main.html";
+                }
+
+                $('#table').center();
+            });
+        </script>
+    </header>
+
+    <body>
+          <!--비번 체크하는 페이지-->
+        <div data-role="page" id="password" style="font-family: 'Nanum';">
+            <form method=post name=number>
+                <p style="text-align: center; margin-top:100px;font-size:30px;"><b>암 호 입 력</b></p>
+                <table id="table">
+                    <tr>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number1" name=number1 onkeyup='check_Pass_main()' autofocus></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number2" name=number2 onkeyup='check_Pass_main()'></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number3" name=number3 onkeyup='check_Pass_main()'></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number4" name=number4 onkeyup='check_Pass_main()'></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </body>
+
+</html>
+
+

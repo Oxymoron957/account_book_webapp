@@ -15,23 +15,23 @@ function openDB_payment(){
 /*
     id(int) | name(text) | category(text) | year(int) | month(int) | day(int) | amount(int)
 */
-function createTable() {
-    db.transaction(function(tr){
-    // var deleteSQL = 'drop table payment';
-    var createSQL = 'create table if not exists payment(id integer primary key autoincrement ,name text, category text, year integer, month integer, day integer, amount integer)';      
-    // tr.executeSql(deleteSQL);
+// function createTable() {
+//     db.transaction(function(tr){
+//     // var deleteSQL = 'drop table payment';
+//     var createSQL = 'create table if not exists payment(id integer primary key autoincrement ,name text, category text, year integer, month integer, day integer, amount integer)';      
+//     // tr.executeSql(deleteSQL);
     
-    tr.executeSql(createSQL, [], function(){
-        console.log('2_1_테이블생성_sql 실행 성공...!!!!!!');       
-     }, function(){
-        console.log('2_1_테이블생성_sql 실행 실패...');           
-     });
-     }, function(){
-        console.log('2_2_테이블 생성 트랜잭션 실패...롤백은 자동');
-     }, function(){
-        console.log('2_2_테이블 생성 트랜잭션 성공...');
-      });
-  }
+//     tr.executeSql(createSQL, [], function(){
+//         console.log('2_1_테이블생성_sql 실행 성공...!!!!!!');       
+//      }, function(){
+//         console.log('2_1_테이블생성_sql 실행 실패...');           
+//      });
+//      }, function(){
+//         console.log('2_2_테이블 생성 트랜잭션 실패...롤백은 자동');
+//      }, function(){
+//         console.log('2_2_테이블 생성 트랜잭션 성공...');
+//       });
+//   }
 
 /*
 결재 정보를 저장합니다.
@@ -427,20 +427,20 @@ function recentPayments() {
         selectSQL = 'select * from payment order by id desc';
         tr.executeSql(selectSQL, [], function(tr,rs){
             $('.payment_history').empty()
-            // 4개 이상일땐 카드를 4개 만든다.
-            if(rs.rows.length>=4){ 
-                for (var i = 0; i < 4 ; i++) {
+            // 5개 이상일땐 카드를 5개 만든다.
+            if(rs.rows.length>=5){ 
+                for (var i = 0; i < 5 ; i++) {
                     var payment_card = 
                     "<!-- 하나의 지출 카드 -->\
-                    <div id='cost_details' class='ui-body ui-body-a'>\
-                        <a data-role='button' id = 'del_button' style='float: right; height: 10px;' value = '"+rs.rows.item(i).id+"' >X</a>\
+                    <div id='cost_details' class='ui-body ui-body-a' style='padding-right:0.5em;border:2px solid #000;background-color: #e7f4fd'>\
+                        <a data-role='button' id = 'del_button' style='float: right;color:#800000' value = '"+rs.rows.item(i).id+"' >x</a>\
                         <div style='height: 2em;' id = 'first_row'>\
-                            <h3 style='float: left;' id = 'paymentBoxName'>"+rs.rows.item(i).name+"</h3>\
-                            <h3 style='text-align: right; float: right; padding-right: 1em;' id = 'paymentBoxDate'>"+rs.rows.item(0).year+"_"+rs.rows.item(0).month+"_"+rs.rows.item(0).day+"</h3>\
+                            <h4 style='float: left;' id = 'paymentBoxName'>"+rs.rows.item(i).name+"</h4>\
+                            <h4 style='text-align: right; float: right; padding-right: 1em;' id = 'paymentBoxDate'>"+rs.rows.item(0).year+"년 "+rs.rows.item(0).month+"월 "+rs.rows.item(0).day+"일"+"</h4>\
                         </div>\
-                        <div style='height: 2em;padding-top: 0.5em;'>\
-                            <h3 style='float: left;' id = 'paymentBoxAmount-0'>"+rs.rows.item(i).amount+"</h3>\
-                            <h3 style='text-align: right; float: right; padding-right: 2em' id = 'paymentBoxCategory-0'>"+rs.rows.item(i).category+"</h3>\
+                        <div style='height: 1em;'>\
+                            <h4 style='float: left;' id = 'paymentBoxAmount-0'>"+addComma(rs.rows.item(i).amount)+"￦"+"</h4>\
+                            <h4 style='text-align: right; float: right; padding-right: 2em' id = 'paymentBoxCategory-0'>"+rs.rows.item(i).category+"</h4>\
                         </div>\
                     </div>\
                     <br>"
@@ -452,15 +452,15 @@ function recentPayments() {
                 for (var i = 0; i < rs.rows.length ; i++) {
                     var payment_card = 
                     "<!-- 하나의 지출 카드 -->\
-                    <div id='cost_details' class='ui-body ui-body-a'>\
-                        <a data-role='button' id = 'del_button' style='float: right; height: 10px;' value = '"+rs.rows.item(i).id+"' >X</a>\
+                    <div id='cost_details' class='ui-body ui-body-a' style='padding-right:0.5em;border:2px solid #000;background-color: #e7f4fd'>\
+                        <a data-role='button' id = 'del_button' style='float: right;color:#800000' value = '"+rs.rows.item(i).id+"' >x</a>\
                         <div style='height: 2em;' id = 'first_row'>\
-                            <h3 style='float: left;' id = 'paymentBoxName'>"+rs.rows.item(i).name+"</h3>\
-                            <h3 style='text-align: right; float: right; padding-right: 1em;' id = 'paymentBoxDate'>"+rs.rows.item(0).year+"_"+rs.rows.item(0).month+"_"+rs.rows.item(0).day+"</h3>\
+                            <h4 style='float: left;' id = 'paymentBoxName'>"+rs.rows.item(i).name+"</h4>\
+                            <h4 style='text-align: right; float: right; padding-right: 1em;' id = 'paymentBoxDate'>"+rs.rows.item(0).year+"년 "+rs.rows.item(0).month+"월 "+rs.rows.item(0).day+"일"+"</h4>\
                         </div>\
-                        <div style='height: 2em;padding-top: 0.5em;'>\
-                            <h3 style='float: left;' id = 'paymentBoxAmount-0'>"+rs.rows.item(i).amount+"</h3>\
-                            <h3 style='text-align: right; float: right; padding-right: 2em' id = 'paymentBoxCategory-0'>"+rs.rows.item(i).category+"</h3>\
+                        <div style='height: 1em;'>\
+                            <h4 style='float: left;' id = 'paymentBoxAmount-0'>"+addComma(rs.rows.item(i).amount)+"￦"+"</h4>\
+                            <h4 style='text-align: right; float: right; padding-right: 2em' id = 'paymentBoxCategory-0'>"+rs.rows.item(i).category+"</h4>\
                         </div>\
                     </div>\
                     <br>"
@@ -471,6 +471,7 @@ function recentPayments() {
         });
         
     });
+
 }
 
 // 이번달 현재까지의 최종 금액
@@ -490,9 +491,13 @@ function get_cur_amount(){
                 }
             }
             console.log(cur_bal)
-            $("#cur_money").text(cur_bal)
+            $("#cur_money").text(addComma(cur_bal))
         });
     });
-
-    
 }
+
+// 숫자를 받아 3자리마다 ,찍기
+function addComma(num) {
+    var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    return num.toString().replace(regexp, ',');
+  }

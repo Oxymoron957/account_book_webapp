@@ -2,32 +2,11 @@
 <html lang="en" >
 <head>
 <meta charset="UTF-8">
-<title>통계</title>
+<title>记账本</title>
 
 <script  src="js/echarts-5.0.2.min.js"></script>
 <script  src="js/jquery.min.js"></script>
-<link rel="stylesheet" href="css/graph_2.css">
-
-<script src="js/paymentDB.js"></script>
-<script>
-	$(document).ready( function() {
-		// DB 연결
-		openDB();  
-		createTable(); 
-		// 查询当前年份月份的数据
-		var month = $('#graphMonth').val();
-		var pitchData = $('#graphMonth option:selected').text();
-		console.log(pitchData);
-		readCategoryPayment('all', undefined, month)
-		
-		// console.log(allData);
-
-		
-		// 이벤트 함수 정의
-	 	
-		 
-	});    
-</script>
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 <body>
@@ -41,35 +20,31 @@
 	</div>
 
 	<div class="nav-links">
-		<a href="main.html" class="link">Home</a>
-		<a href="" class="link">통계</a>
-		<a href="settings.html" class="link">설정</a>
+		<a href="" class="link">Home</a>
+		<a href="" class="link">title</a>
+		<a href="" class="link">title</a>
 		<a href="" class="link">title</a>
 	</div>
 </nav>
 
 <div class="inform">
 	<div class="month">
-		<select data-native-menu="false" name="graphMonth" id="monthselect" style="height: 30px;">
-			<option value="" selected disabled hidden>==선택하세요==</option>
-			<option class="monthoption" value="1">2021년01월</option>
-			<option class="monthoption" value="2">2021년02월</option>
-			<option class="monthoption" value="3" select="selected">2021년03월</option>
-			<option class="monthoption" value="4">2021년04월</option>
-			<option class="monthoption" value="5">2021년05월</option>
-			<option class="monthoption" value="6">2021년06월</option>
+		<select class="monthselect">
+			<option class="monthoption">2021년01월</option>
+			<option class="monthoption">2021년02월</option>
+			<option class="monthoption">2021년03월</option>
+			<option class="monthoption">2021년04월</option>
 		</select>
 	</div>
 	<div class="graphicalbutton">
-		<div class="brokenline"><a href="graph.html" class="logofont">그래프</a>
+		<div class="brokenline"><a href="" class="logofont">그래프</a>
 		</div>
-		<div class="circular" name="circular1" id="circular1"><a href="" class="logofont">원형</a>
+		<div class="circular"><a href="" class="logofont">원형</a>
 		</div>
 	</div>
 	<div class="detailed">
 		<div class="graphical" id="graphical"></div>
-		<div id='detail'></div>
-		<!-- <a href="detailed.html">
+		<a href="detailed.html">
 			<div class="databar">
 				<div class="logo"><img src="./img/gw.png" height="80px" width="80px"></div>
 				<div class="databarbig">
@@ -128,38 +103,60 @@
 					</div>
 				</div>
 			</div>
-		</a> -->
+		</a>
 	</div>
 
 
 
 
 </div>
-<script  src="js/graph_2.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){	
-	$("#graphMonth").change(() => {
-		var pitchData = $('#graphMonth option:selected').text();
-		var year = pitchData.split('년')[0]
-		var month = $('#graphMonth').val();
-        document.querySelector('#graphical').innerHTML = '';
-		document.querySelector('#detail').innerHTML = ''
-		readCategoryPayment('all', year, month)
-	})
-	$("#detail").on('click', '#Adetailed', function(e) {
-		var index=$(this).index();
-		let DomArr = document.getElementById("detail").getElementsByTagName('div')
-		let category = queryDataValue(index, DomArr)
-		let month =  $('#graphMonth').val();
-		window.location.href = "./detailed.html?month=" + month + '&category=' + category;
-	})
-	// 获取动态分类值
-	function queryDataValue(index, arr) {
-		let i = index * 10 + 5
-		return arr[i].innerText
-	}
-});
+	var myChart = echarts.init(document.getElementById('graphical'));
+	option = {
+	    color:['#37a7e1','#dacb64', '#10832e', '#dd7bac'],
+	    //提示框组件,鼠标移动上去显示的提示内容
+	    tooltip: {
+	       trigger: 'item',
+               		fontSize: 35,
+	       formatter: "{a} <br/>{b}: {c} ({d}%)"//模板变量有 {a}、{b}、{c}、{d}，分别表示系列名，数据名，数据值，百分比。
+	    },
+	    series: [
+	        {
+	            name:'명세',
+	            type:'pie',
+	            //饼状图
+	           // radius: ['50%', '70%'],
+	            avoidLabelOverlap: false,
+	            //标签
+	            label: {
+	            	position: 'inner',
+               		fontSize: 35,
+	                normal: {
+	                    show: true,
+	                    position: 'inside',
+	                    formatter: '{b} {d}%',//模板变量有 {a}、{b}、{c}、{d}，分别表示系列名，数据名，数据值，百分比。{d}数据会根据value值计算百分比
 
+	                   textStyle : {                   
+	                    align : 'center',
+	                    baseline : 'middle',
+	                    fontFamily : '微软雅黑',
+	                    fontSize : 35,
+	                    fontWeight : 'bolder'
+	                 }
+	                },
+	            },
+	            data:[
+	                {value:40000, name:'쇼핑'},
+	                {value:30000, name:'재테그'},
+	                {value:20000, name:'여행'},
+	                {value:10000, name:'교통'}
+	            ]
+	        }
+	    ]
+	};
+	option && myChart.setOption(option);
 </script>
+
+<script  src="js/index.js"></script>
 </body>
 </html>

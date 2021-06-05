@@ -4,84 +4,130 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>제이쿼리</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-      
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+    <script  src="js/jquery.min.js"></script>
+    <script  src="js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="./css/menu.css"/>
+    <link rel="stylesheet" href="./css/setting.css"/>
     <script type="text/javascript" src="./js/paymentDB.js"></script>
     <script type="text/javascript" src="./js/auto_transaction.js"></script>
     <script type="text/javascript" src="./js/category.js"></script>
     <script type="text/javascript" src="./js/security_check.js"></script>
-        
+    <script type="text/javascript" src="./js/graphDB.js"></script>
+    <script src="./js/menu.js"></script>
+    
+      <style>
+        * { margin: 0px ; padding: 0px ; font-family:'Nanum';}
+      </style>
       <script>
           $(document).ready( function() {
-                openDB_payment(); // 입출금 정보 DB 생성
-                openDB_category(); // 카테고리 DB 생성 
-                openDB_auto_transaction() // 자동입출금 DB 생성
+            // 메뉴 숨김
+            $('.menu_2' ).hide();
+            
+            openDB();
+            //   openDB_payment(); // 입출금 정보 DB 생성
+            //   openDB_category(); // 카테고리 DB 생성 
+            //   openDB_auto_transaction() // 자동입출금 DB 생성
 
-                createTable(); // 입출금 정보 테이블 생성
-                createTableCat(); //카테고리 테이블 생성
+            createTableCat(); //카테고리 테이블 생성
                 createTableAuto(); //자동입출금 테이블 생성
-
                 createCatList(); //자동입출금 테이블에서 불러와 select 선택지 추가해줌
-                //createAutoList(); //자동입출금 테이블에서 불러와 자동입출금 관리 페이지에 카드를 추가해줌
-                //insertAutoToDB(); //자동입출금 항목의 해당하는 날짜가 되면 알아서 자동입출금 테이블에 추가해줌
+                createAutoList(); //자동입출금 테이블에서 불러와 자동입출금 관리 페이지에 카드를 추가해줌
+                insertAutoToDB(); //자동입출금 항목의 해당하는 날짜가 되면 알아서 자동입출금 테이블에 추가해줌
                 createCatIcon(); //카테고리 테이블에서 불러와 동그라미 생성해줌
-                
-                // deletePayment();
-                //saveBudget();//예산 최초 저장
-                
-        });
+                createTable();
+                updateAuto();
 
+              $('#saveAuto').click(function(){
+                  addAutoMoney();
+                  createAutoList();
+                  
+                });
+
+              $('#saveCat').click(function(){
+                addCategory();
+                createCatIcon();
+              });
+
+              $('#deleteButton').click(function(){
+                catDeleteAction();
+                if($(this).html()=='카테고리 삭제'){
+                  $(this).html('완 료');
+                }
+                else{
+                  $(this).html('카테고리 삭제');
+                }
+              });
+
+              $(document).on("click","#autoDel",function(){
+                id_val = $(this).attr("value");
+                console.log("삭제할 것의 아이디는 "+id_val);
+                deleteAuto(id_val);
+                createAutoList();
+              });
+
+              $(document).on("click","#deleteThisCat",function(){
+                id_val = $(this).attr("value");
+                console.log("삭제할 것의 아이디는 "+id_val);
+                deleteCatIcon(id_val);
+                deleteOn();     
+              });
+        });
       </script>
   </head>  
 
+
+
     <!--##################메인 화면######################-->
   <body>
-    <div data-role="page" id="main">
-      <div data-role="header" data-postion="fixed" style="background-color:rgb(211, 214, 247)">
-        <h1 style="font-size:22px; ">설 정</h1>
-        <a href="#menu" data-role="button" data-icon="bars" data-iconpos="notext" style="margin-top: 10px;"></a>
-
-        <!--메뉴 창-->
-        <div data-role="panel" id="menu" data-display="overlay">
-          <div data-role="header">
-            <h1>메뉴</h1>
-          </div>
-          <div data-role="content">
-            <tr data-role="listview" data-inset="true">
-              <td><a href="#" style="font-size:20px">메 인</a></td>
-              <td><a href="#" style="font-size:20px">통계</a></td>
-              <td><a href="#" style="font-size:20px">설정</a></td>
-            </tr>
-          </div>
+    <div data-role="page" id="main" style="background-color: #e7f4fd;">
+      <div data-role="header" data-postion="fixed" style="text-align : center; background-color:#e7f4fd;">
+        <h1 style="font-size:28px; ">설 정</h1>
+        <a href="" id="menu_button" class="ui-btn" style="margin-top: 0.1em; margin-left: 0.1em;background-color: #e7f4fd; border:0; outline: 0;" onclick="ShowMenu()">
+          <img src="img/menu.png" alt="menu" style="width: 20px; margin-top: 16px;">
+        </a>
         </div>
-      </div>
       <!--설정 리스트-->
-      <ul data-role="listview" data-inset="true">
-        <li><a href="#budget" data-transition="slide" style="font-size:20px">예산 설정</a></li>
-        <li><a href="#auto" style="font-size:20px">자동 입/출금 관리</a></li>
-        <li><a href="#category" style="font-size:20px">카테고리 관리</a></li>
-        <li><a href="#password" style="font-size:20px">암호 설정</a></li>
-        <li><a href="#reset" style="font-size:20px">초기화</a></li>
-      </ul>       
+      <ul class="mylist" data-inset="true" style="background-color: #e7f4fd;">
+        <li class="sub"><a class="btn" style="margin-left:1px; color:rgb(0, 0, 0);" href="#budget" data-transition="slide">💰예산 설정</a></li>
+        <li class="sub"><a class="btn" style="color: rgb(0, 0, 0);"href="#auto" data-transition="slide">💸자동 입/출금 관리</a></li>
+        <li class="sub"><a class="btn" style="color: rgb(0, 0, 0);"href="#category" data-transition="slide">📌카테고리 관리</a></li>
+        <li class="sub"><a class="btn" style="color: rgb(0, 0, 0);"href="#password" data-transition="slide">🔒암호 설정</a></li>
+      </ul>    
+
+      
+      <!-- 메뉴 페이지 -->
+      <div class="menu_bg" style="width: 10em;">
+        <div class="menu" style="padding-top: 4em;">
+                  <div style="width: 85%; text-align: right;font-size: 1em; font-weight: bold;" onclick="HideMenu()">닫기</div>
+                  <div>
+                      <div class='menu_button' onclick="location.href='main.html';">◼ Home</div>
+                      <div class='menu_button' onclick="location.href='graph.html';">◼ 월별 통계</div>
+                      <div class='menu_button' onclick="location.href='graph_2.html';">◼ 카테고리별 통계</div>
+                      <div class='menu_button' onclick="location.href='settings.html';">◼ 설정</div>    
+                  </div>
+          </div>
+          <div class="menu_bg" style="width: 12.5em; margin-left: 10em; color:transparent" onclick="HideMenu()">
+          </div>
+      </div>
     </div>
 
 
       <!--##################예산 설정######################-->
-    <div data-role="page" id="budget" style="background-color:rgb(211, 214, 247)">
-      <p style="margin-left:16px; margin-top: 110px;font-size:30px;"><b>당신의 예산은...</b></p>
+    <div data-role="page" id="budget" style="background-color:#e7f4fd">
+      <a href="#main" data-transition="flip"><img src="/img/back.png" style="width: 30px; margin: 10px;"></a> 
+      <p style="margin-left:20px; margin-top: 110px;font-size:35px; color: #494949;"><b>당신의 예산은...</b></p>
       <!--예산에 대한 정보를 입력받는다.(얼마인지만)-->
       <div data-role="content">
         <fieldset>
           <table>
             <tr>
-              <td><label for="budgetInput"style="font-size:20px;">월 </label></td>
-              <td><input type="integer" name="budgetInput" id="budgetInput" placeholder="예산 입력"></td>
-              <td><label for="budgetInput"style="font-size:20px;">원</label></td>
+              <td><label for="budgetInput"style=" margin-left:10px;margin-right:10px;font-size:26px; ">월 </label></td>
+              <td><input class="budgetV" type="integer" name="budgetInput" style=" margin-right:10px;width:150px;"id="budgetInput" placeholder="💰예산 입력"></td>
+              <td><label for="budgetInput"style="font-size:26px;"> 원</label></td>
 
               <!--저장 버튼을 누르면 updateBudget()이 발동이 되어 자동입출금 테이블에 알아서 이번 달 1일 날짜로 예산 항목으로 추가가 된다.-->
-              <td><a href="#main" data-role="button" id="saveBu" data-inline="true" onclick="updateBudget();">저 장</a></td>
+              <td><a href="#main" style="margin-left : 20px;margin-bottom:20px;padding:8px;  background-color: rgb(255, 255, 255); border-color:#e7f4fd;"  data-role="button" id="saveBu" data-inline="true" onclick="updateBudget();">S A V E</a></td>
             </tr>
           </table>
         </fieldset>
@@ -93,20 +139,22 @@
      <!--##################자동 입/출금 관리######################-->
 
    <!--자동 입출금 관리 메인 홈 페이지. 여기에 자동 입출금 카드가 뜬다(createListAuto)-->
-  <div data-role="page" id="auto">
-    <div data-role="header"data-position="fixed">
-      <a href="#main" data-role="button" data-icon="back" data-iconpos="notext" style="margin-top: 10px;"></a>
-      <h1 style="font-size:19px">자동 입/출금 관리</h1>
+  <div data-role="page" id="auto" style="background-color:#e7f4fd;">
+    <div data-role="header"data-position="fixed" style="border-bottom:3px solid black; background-color: #e7f4fd; text-align: center;">
+      <a href="#main" data-role="button" data-transition="flip" onClick="top.location='javascript:location.reload()'" data-icon="back" data-iconpos="notext" style="margin-top: 10px;"></a>
+      <h1 style="font-size:23px; width:180px; margin-left: 90px;">자동 입/출금 관리</h1>
       <a href="#addAuto" data-role="button" data-transition="slidedown" data-icon="plus" data-iconpos="notext" style="margin-top: 10px;"></a>
     </div>
     <div data-role="content">
       <lu data-role="listview" id="autoShowList">
       </lu>
+    
     </div>
   </div>
 
+
   <!--자동 입출금 항목 추가 페이지-->
-  <div data-role="page" id="addAuto">
+  <div data-role="dialog" id="addAuto">
     <div data-role="header">
       <h1>자동 입/출금</h1>
       <a href="#auto" data-role="button" data-transition="slidedown" data-icon="delete" data-iconpos="notext" syle="argin-top:10px;"></a>
@@ -152,7 +200,7 @@
 
 
         <!--저장 버튼을 누르면 addAutoMoney 발동으로 자동 입출금 테이블에 업로드된다-->
-        <a href="#auto" data-role="button" id="saveAuto" data-transition="slideup" onclick="addAutoMoney();">저장</a>
+        <a href="#auto" data-role="button" id="saveAuto" data-transition="slideup">저장</a>
       </div>
     </div>
   </div>
@@ -164,21 +212,23 @@
   <!--카테고리 메인 홈 페이지-->
   <!--이 페이지에 createIconList(동그라미)가 뜨도록 함-->
   <div data-role="page" id="category">
-    <div data-role="header"data-position="fixed">
-      <a href="#main" data-role="button" data-icon="back"  data-iconpos="notext" style="margin-top: 10px;"></a>
+    <div data-role="header"data-position="fixed" style="border-bottom:3px solid black; background-color: #e7f4fd; text-align: center;">
+      <a href="#main" data-role="button" data-transition="flip" onClick="top.location='javascript:location.reload()'" data-icon="back" data-iconpos="notext" style="margin-top: 10px;"></a>
+      <h1 style="font-size:23px; width:180px; margin-left: 90px;">카테고리 관리</h1>
       <a href="#addCat" data-role="button" data-transition="slidedown" data-icon="plus" data-iconpos="notext" style="margin-top: 10px;"></a>
-      <h1 style="font-size:19px">카테고리 관리</h1>
     </div>
     <div data-role="content" id="catIcons">
       </div>
+      <!--카테고리 삭제-->
+      <div data-role="footer" id="deleteFooter" data-position="fixed">
+      <div data-role="button" id="deleteButton" style="height:50px; font-size:19px; text-align: center; line-height:50px;border-top: 3px solid;">카테고리 삭제</div>
     </div>
   </div>
 
   <!--카테고리 추가 장-->
-  <div data-role="page" id="addCat">
+  <div data-role="dialog" id="addCat">
     <div data-role="header">
       <h1>카테고리 추가</h1>
-      <a href="#category" data-role="button" data-transition="slidedown" data-icon="delete" data-iconpos="notext" syle="argin-top:10px;"></a>
     </div>
     <div data-role="content">
       
@@ -186,14 +236,14 @@
       <fieldset>
         <table>
           <tr>
-            <td><label for="catName"style="font-size:19px;">카테고리 :  </label></td>
-            <td><input type="text" name="catName" id="catName" placeholder="이름"></td>
-            <td><input type="color" name="catColor" id="catColor"></td>
+            <td><label for="catName"style="font-size:19px;">카테고리 : </label></td>
+            <td><input type="text" name="catName" id="catName"style="width:150px;" placeholder="이름"></td>
+            <td><input type="color" name="catColor" style="width:40px;"id="catColor"></td>
           </tr>
         </table>
       </fieldset>
       <!--저장 버튼을 누르면 addCategory함수 발동해서 카테고리 테이블에 추가-->
-      <a href="#category" data-role="button" id="saveCat" data-transition="slideup" onclick="addCategory();" onclick="top.location='javascript:location.reload()'">저장</a>
+      <a href="#category" data-role="button" id="saveCat" data-transition="slideup" >저장</a>
     </div>
   </div>
 
@@ -204,25 +254,27 @@
   <!--##################암호설정######################-->
 
   <!--비번 체크하는 페이지-->
-  <div data-role="page" id="password" style="background-color:rgb(211, 214, 247)" >
+  <div data-role="page" id="password" style="background-color:#e7f4fd" >
     <form method=post name=number>
-      <p>일단 초기 암호를 0000으로 했습니다</p>
-      <p style="text-align: center; margin-top:70px;font-size:30px;"><b>암 호 입 력</b></p>
+      <p style="text-align: center; margin-top:70px;font-size:25px;"><b>🔒 기존 암호 입력 🔒</b></p>
       <table>
+        
         <tr>
+          <div style="text-align:center;">
           <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number1" name=number1 onkeyup='check_Pass()' autofocus></td>
           <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number2" name=number2 onkeyup='check_Pass()'></td>
           <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number3" name=number3 onkeyup='check_Pass()'></td>
           <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number4" name=number4 onkeyup='check_Pass()'></td>
+        </div>
         </tr>
+        
       </table>
       </form>
     </div>
     <!--비번 변경하는 페이지-->
     <div data-role="page" id="password2" style="background-color:#dddddd;">
       <form method=post name=number2>
-      <p>변경한 다음에는 입력한 암호로 확인받으면 됩니다</p>
-      <p style="text-align: center; margin-top:70px;font-size:30px;"><b>암 호 입 력</b></p>
+      <p style="text-align: center; margin-top:70px;font-size:25px;"><b>💫 새 암호 입력 💫</b></p>
         <table>
           <tr>
             <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number5" name=number5 onkeyup='change_Pass()' autofocus></td>
@@ -239,17 +291,3 @@
   <!--#################초기화######################-->
 
 
-    <!--초기화 하기-->
-    <div data-role="dialog" id="warning">
-      <div data-role="header" data-postion="fixed">
-        <h1>초기화 경고</h1>
-        <div data-role="content"></div>
-          <p>전체 초기화를 진행하면 데이터를 복구할 수 없습니다. </br>
-            정말로 삭제하시겠습니까? 왜 안뜨지..? </p>
-          <a href="#main" data-role="button">네</a>
-          <a href="#main" data-role="button">아니오</a>
-        </div>
-      </div>
-    </div>
-  </body>
-</html> 

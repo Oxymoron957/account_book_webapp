@@ -8,28 +8,28 @@ function openDB_category(){
 
 
   //카테고리 테이블 만들기
-  function createTableCat() 
-  {
-    db_cat.transaction(function(tr){
-      var createSQL = 'create table if not exists category(name text, color color)';      
-      tr.executeSql(createSQL, [], function(){
-        console.log('카테고리 테이블 생성 sql 실행 성공');
-      },function(){
-        console.log('카테고리 테이블 생성 sql 실행 실패');
-      },function(){
-        console.log('카테고리 테이블 생성 트랜잭션 실패 , 롤백 자동');
-      },function(){
-        console.log('카테고리 테이블 생성 트랜잭션 성공');
-      }
-    );          
-  });
-  }
+  // function createTableCat() 
+  // {
+  //   db_cat.transaction(function(tr){
+  //     var createSQL = 'create table if not exists category(name text, color color)';      
+  //     tr.executeSql(createSQL, [], function(){
+  //       console.log('카테고리 테이블 생성 sql 실행 성공');
+  //     },function(){
+  //       console.log('카테고리 테이블 생성 sql 실행 실패');
+  //     },function(){
+  //       console.log('카테고리 테이블 생성 트랜잭션 실패 , 롤백 자동');
+  //     },function(){
+  //       console.log('카테고리 테이블 생성 트랜잭션 성공');
+  //     }
+  //   );          
+  // });
+  // }
 
 
 
   //카테고리 추가
   function addCategory() {
-    db_cat.transaction(function(tr){
+    db.transaction(function(tr){
       var insertSQL = 'insert into category(name,color) values(?,?)';
       var name = $('#catName').val();
       var color = $('#catColor').val();
@@ -48,7 +48,7 @@ function openDB_category(){
 
 //카테고리를 자동 입출금의 카테고리 선택 (<select>에다 넣기)에다 추가
 function createCatList(){
-    db_cat.transaction(function(tr){
+    db.transaction(function(tr){
     var selectSQL='select * from category';
     //select의 id로 불러옴
     var targetSel=document.getElementById('select2');
@@ -74,7 +74,7 @@ function createCatList(){
 
 //카테고리 데베에서 가져와 원형 아이콘 만들기
 function createCatIcon(){
-    db_cat.transaction(function(tr){
+    db.transaction(function(tr){
     var selectSQL='select * from category';
     tr.executeSql(selectSQL,[],function(tr,rs){
       //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
@@ -117,7 +117,7 @@ function createCatIcon(){
 
 // Main 화면용 카테고리 가져오는 메서드
 function createCatIcon_main(){
-    db_cat.transaction(function(tr){
+    db.transaction(function(tr){
     var selectSQL='select * from category';
     tr.executeSql(selectSQL,[],function(tr,rs){
       //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
@@ -126,10 +126,11 @@ function createCatIcon_main(){
         $(target).css({
           "width":"360px",
           "margin":0});
-
+      
       //정보 하나씩 불러옴
       for(var i=0;i<rs.rows.length;i++)
       {
+        console.log(rs.rows.item(i));
         var catName=rs.rows.item(i).name;
         var catColor=rs.rows.item(i).color;
         //span 하나씩 추가

@@ -5,62 +5,51 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>main</title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
-        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+        <script  src="js/jquery.min.js"></script>
+        <script  src="js/jquery.mobile-1.4.5.min.js"></script>
+        <script  src="js/graphDB.js"></script>
         <link rel="stylesheet" href="./css/main.css"/>
+        <link rel="stylesheet" href="./css/menu.css"/>
 
         <style>
             /* 스타일 초기화 */
-            * { margin: 0px ; padding: 0px ; }
-
-            /* 메뉴 부분 Style 설정 */
-            .menu_bg { width: 100%; height: 2000px; position: fixed; top:0px; left:0px; overflow: hidden; display: none; }
-            .menu { position:absolute; top:0px; left:0px; width:100%; height: 100%; background-color:#DDD; }
-            .menu > div { padding: 2%; }
+            * { margin: 0px ; padding: 0px ; font-family:'Nanum';}
         </style>
 
         <!-- 지출 DB 연결 -->
         <script src="./js/paymentDB.js"></script>
         <script src="./js/category.js"></script>
+        <script src="./js/menu.js"></script>
         
         <script>
             // payment DB 연결 및 Table 생성
-            openDB_payment();  
+            // openDB_payment();
+            openDB();
 		    createTable();   
 
             // category DB 연결 및 Table 생성
-            openDB_category();
+            // openDB_category();
             createTableCat();
-             
-            // menu 나오는 시간 설정
-            var giMenuDuration = 300;
-            // 전체 메뉴를 오른쪽으로 슬라이드하여서 보여준다.
-            function ShowMenu(){
-                $('.menu_bg' ).css( { 'display' : 'block' } );
-                $('.menu' ).css( { 'left' : '-100%' } );
-                $('.menu' ).animate( { left: '0px' }, { duration: giMenuDuration } );
-            }
-            // 전체 메뉴를 왼쪽으로 슬라이드하여서 닫는다.
-            function HideMenu(){
-                $('.menu' ).animate( { left: '-100%' }, { duration: giMenuDuration, complete:function(){ $('.menu_bg' ).css( { 'display' : 'none' } ); } } );
-            }
 
             // 현재 날짜 저장
             var Now = new Date();
             var NowTime = Now.getFullYear();
-            NowTime += '-' + eval(Now.getMonth() + 1) ;
-            NowTime += '-' + Now.getDate();
-            NowTime += ' ' + Now.getHours();
-            NowTime += ':' + Now.getMinutes();
+            NowTime += '년 ' + eval(Now.getMonth() + 1) ;
+            NowTime += '월 ' + Now.getDate();
+            NowTime += '일 ';
+
+            function clearTxtBox(){
+                // 텍스트 박스 초기화
+                $('#PaymentAmount').val('');
+                $('#PaymentName').val('');
+            }
 
             // 페이지가 로드되기 전 실행되는 함수 
             $(document).ready(function() { 
                 // 메뉴 숨김
                 $('.menu_2' ).hide();
                 
-                // 잔액 부분 색상 설정
-                $('.left_money_section').css('background-color', 'lightgray').children().css('background-color', 'lightgray');
                 // 내역 부분 패딩+높이 설정
                 $('.payment_history').css('padding-top','1.5em').children().css('height', '4em')
                 
@@ -73,6 +62,10 @@
 
                 // 결재 내역을 DB에 추가하는 함수
                 $('#submit1').click( function() {
+                    if ($('#PaymentAmount').val()<=0 || $('input[name="radio_button"]:checked').val()==undefined) {
+                        alert('값을 입력하세요')
+                        return
+                    }
                     // DB에 결재 내역을 추가한다.
                     insertPayment();
                     // 최근 결재 내역을 가져와서 카드형식으로 
@@ -97,28 +90,31 @@
                 recentPayments();
                 get_cur_amount();
                 })
-            });
 
-            
+                $('#add_page').children().css('background-color','#e8f4fc');
+            });
         </script>
     </header>
 
     <body>
         <!-- 메인 페이지 -->
-        <div data-role="page" id = "main_page" >
+        <div data-role="page" id = "main_page" style="background-color: #e7f4fd">
             <!-- 헤더 생성(위치 고정)-->
-            <div data-role="header" data-position="fixed" style="height: 4em;">
+            <div data-role="header" data-position="fixed" style="height: 3em;background-color: #e7f4fd; border: 0;" >
                 <!-- **날짜와 버튼을 중간으로 정렬해야함-->
-                
+                <div style="margin-right: 1em; margin-top: 1em; font-size: 0.9em;">
                     <h3 id="date" style="text-align:right;"></h3>
-                
-                <a href="" id="menu_button" onclick="ShowMenu()">Menu</a>
+                </div>
+                <a href="" id="menu_button" class="ui-btn" style="margin-top: 0.1em; margin-left: 0.1em;background-color: #e7f4fd; border:0; outline: 0;" onclick="ShowMenu()">
+                    <img src="img/menu.png" alt="menu" style="width: 20px;">
+                </a>
             </div>
 
             <!--잔액 확인 공간-->
-            <div data-role = content class="left_money_section" style="padding-top : 1em ; padding-bottom: 0em; padding-left: 0em;">
-                <div class="ui-body ui-body-a" style="border-style: none">
-                    <h1 id = "cur_money"></h1>
+            <div data-role = content class="left_money_section" style="padding-top : 0.5em ; padding-bottom: 0em; padding-left: 0em;background-color: #e7f4fd;border-bottom: 2px solid #000;">
+                <div class="ui-body ui-body-a" style="border-style: none;background-color: #e7f4fd">
+                    <h2 style = "display:inline ">잔액 : </h2>
+                    <h2 id = "cur_money" style = "display:inline;"></h2>
                 </div>
             </div>
 
@@ -126,55 +122,60 @@
             <div data-role="content" class="payment_history"></div>
            
             <!-- 푸터바 공간 생성 -->
-            <div data-role="footer" data-position="fixed" style="height: 3.5em; text-align: center;">
+            <div data-role="footer" data-position="fixed" style="height: 4em; text-align: center;background-color: #e7f4fd;border-top:2px solid #000" onclick="HideMenu()">
                 <!-- 하단 추가하는 버튼 생성 -->
-                <div  style="padding-top: 0.3em;">
-                    <a data-role="button" href = "#add_page" >+</a>
-                </div>
+                <a class="ui-btn" href = "#add_page" onclick="clearTxtBox()" style="background-color: #e7f4fd; border:0;">
+                    <img src="img/add.png" alt="add" style="width:25px">
+                </a>
             </div>
         </div>
         
         <!-- 지출 내역 추가하는 페이지 -->
-        <div data-role="dialog" id="add_page">
+        <div data-role="dialog" id="add_page" >
             <div data-role="content" id ="add-page">
-                <!-- 수입/지출 선책하는 부분-->
-                    <fieldset data-role="controlgroup" data-type = "horizontal" style="text-align: center;">
-                        <legend>수입/지출</legend>
-                        <input type="radio" id="outcome_radio_id" name="radio_button" value="-1"><label for="outcome_radio_id">지출</label>
-                        <input type="radio" id="income_radio_id" name="radio_button" value="1"><label for="income_radio_id">수입</label>
-                    </fieldset>
+                <!-- 수입/지출 선택하는 부분-->
+                <fieldset data-role="controlgroup" data-type = "horizontal" style="text-align: center;">
+                    <legend style="font-size: 1.5em; font-family: 'NanumSquareRoundR';"></legend>
+                    <input type="radio" id="outcome_radio_id" name="radio_button" value="-1" ><label for="outcome_radio_id">지출</label>
+                    <input type="radio" id="income_radio_id" name="radio_button" value="1"><label for="income_radio_id">수입</label>
+                </fieldset>
                 <!-- 금액 적는 부분 -->
-                <div data-role="fieldcontain">
-                    <label for="name">금액</label>
-                    <input type="number" name="name_money" id="PaymentAmount" value=""/>
+                <div data-role="fieldcontain" style="border: 0;">
+                    <label for="name" style="font-size: 1.5em; font-family: 'NanumSquareRoundR'; text-align: center">금액</label>
+                    <input type="number" name="name_money" id="PaymentAmount" value="" style="background-color: #d5e3ec;" Placeholder = "금액을 입력하세요."/>
                 </div>  
                 <!-- 지출 메모 적는 부분 --> 
-                <div data-role="fieldcontain">
-                    <label for="name">지출메모</label>
-                    <input type="text" name="name_memo" id="PaymentName" value=""  />
+                <div data-role="fieldcontain" style="border: 0;">
+                    <label for="name" style="font-size: 1.5em; font-family: 'NanumSquareRoundR'; text-align: center;">지출메모</label>
+                    <input type="text" name="name_memo" id="PaymentName" value="" style="background-color: #d5e3ec;" Placeholder = "메모를 입력하세요."/>
                 </div> 
                 <!-- 카테고리 고르는 박스 -->
-                <div id="category-box" style="height: 14em;" >
-                    <div data-role="content" id="catIcons">
+                <div id="category-box" >
+                    <div data-role="content" id="catIcons" style="height: 10em;background-color: #d5e3ec; border-radius: 0.5em">
                     </div>
                 </div>
                 
                 <div data-role="controlgroup" data-type = "horizontal" style="text-align: center;">
-                    <a href="#" data-role="button" data-rel="back" id = "submit1">추가</a>
-                    <a href="#" data-role="button" data-rel="back">취소</a>
+                    <a href="#" data-role="button" data-rel="back" id = "submit1" style="background-color: #f8fafc">추가</a>
+                    <a href="#" data-role="button" data-rel="back" style="background-color: #f8fafc">취소</a>
                 </div>
             </div>
         </div>
         
         <!-- 메뉴 페이지 -->
         <div class="menu_bg" style="width: 10em;">
-            <div class="menu" style="padding-top: 5em;">
-                <div style="width: 96%; text-align: right" onclick="HideMenu()">닫기</div>
-                <div onclick="location.href='main.html';">Home</div>
-                <div onclick="location.href='graph.html';">통계</div>
-                <div onclick="location.href='settings.html';">설정</div>
-            </div>
+            <div class="menu" style="padding-top: 4em;">
+                <div style="width: 85%; text-align: right;font-size: 1em; font-weight: bold;" onclick="HideMenu()">닫기</div>
+                <div>
+                    <div class='menu_button' onclick="location.href='main.html';">◼ Home</div>
+          <div class='menu_button' onclick="location.href='graph.html';">◼ 월별 통계</div>
+          <div class='menu_button' onclick="location.href='graph_2.html';">◼ 카테고리별 통계</div>
+          <div class='menu_button' onclick="location.href='settings.html';">◼ 설정</div>    
+                </div>
         </div>
+        <div class="menu_bg" style="width: 12.5em; margin-left: 10em; color:transparent" onclick="HideMenu()">
+        </div>
+
     </body>
 
 </html>
