@@ -1,14 +1,20 @@
 <!DOCTYPE html>
+<!-- 처음 어플을 켰을 때 비밀번호를 요구하는 페이지입니다. -->
 
 <html>
     <header>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>main</title>
+
         <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+        <link rel="stylesheet" href="./css/main.css"/>
+
         <script  src="js/jquery.min.js"></script>
         <script  src="js/jquery.mobile-1.4.5.min.js"></script>
-        <link rel="stylesheet" href="./css/main.css"/>
+        
+        <script src="js/security_check.js"></script>
+        <script src="js/paymentDB.js"></script>
 
         <style>
             /* 스타일 초기화 */
@@ -17,6 +23,10 @@
 
         <script type="text/javascript" src="./js/security_check.js"></script>
         <script>
+            openDB();
+            createTable();   
+            createTablePassword();
+
             jQuery.fn.center = function () {
             this.css("position","absolute");
             
@@ -24,13 +34,9 @@
             $(window).scrollLeft()) + "px");
             return this;
             }
-
             
-            $(document).ready(function () {
-                if (!isPassword){
-                    location.href="main.html";
-                }
-
+            $(document).ready(function () {                
+                passwordCheck_main();
                 $('#table').center();
             });
         </script>
@@ -38,15 +44,15 @@
 
     <body>
           <!--비번 체크하는 페이지-->
-        <div data-role="page" id="password" style="font-family: 'Nanum';">
+        <div data-role="page" id="index_page" style="font-family: 'Nanum';">
             <form method=post name=number>
                 <p style="text-align: center; margin-top:100px;font-size:30px;"><b>암 호 입 력</b></p>
                 <table id="table">
                     <tr>
-                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number1" name=number1 onkeyup='check_Pass_main()' autofocus></td>
-                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number2" name=number2 onkeyup='check_Pass_main()'></td>
-                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number3" name=number3 onkeyup='check_Pass_main()'></td>
-                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number4" name=number4 onkeyup='check_Pass_main()'></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number1" name=number1 onkeyup='check_Pass_Enter_main()' autofocus></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number2" name=number2 onkeyup='check_Pass_Enter_main()'></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number3" name=number3 onkeyup='check_Pass_Enter_main()'></td>
+                        <td style="width:50px; height:50px; font-size:30px; padding: 0.3em;"><input type="number" maxLength=1 id="number4" name=number4 onkeyup='check_Pass_Enter_main()'></td>
                     </tr>
                 </table>
             </form>

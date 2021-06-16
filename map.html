@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAP</title>
+
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+    <link rel="stylesheet" href="./css/menu.css"/>
+
+    <script  src="js/jquery.min.js"></script>
+    <script  src="js/jquery.mobile-1.4.5.min.js"></script>
+    
+    <script src="js/map/jquery.ui.map.min.js"></script>
+    <script src="js/map/jquery.ui.map.js"></script>
+    <script src="js/map/jquery.ui.map.full.min.js"></script>  
+    <script src="js/map/jquery.ui.map.extensions.js"></script>	 
+    <!-- 구글맵 API 라이브러리 파일(CDN 방식)  -->
+    <script src="http://maps.google.com/maps/api/js?key=AIzaSyD6XSC6qwdu0U2pm2DlPpxBHffl347jpYI&language=ko"></script>  
+ 
+    <script src="js/map.js"></script>
+    <script src="js/paymentDB.js"></script>
+    <script src="js/menu.js"></script>
+ 
+    <style type="text/css">
+        
+        /* 스타일 초기화 */
+        * { margin: 0px ; padding: 0px ; font-family:'Nanum';}
+    </style>
+
+    <script>
+        // payment DB 연결 및 Table 생성
+        openDB();
+		createTable(); 
+        
+
+        $(document).ready(function () {
+            // 메뉴 숨김
+            $('.menu_2' ).hide();
+            initMap();
+        });
+        
+
+    </script>
+</head>
+
+<body>
+    <div data-role="page" id = "map_page" style="background-color: #e7f4fd">
+        <!-- 헤더 생성(위치 고정)-->
+        <div data-role="header" data-position="fixed" style="height: 3em;background-color: #e7f4fd; border: 0;" >
+            <div style="margin-top: 1.5em; font-size: 1em;">
+                <h3 style="text-align: center;">이번달 지출내역</h3>
+            </div>
+            <a href="" id="menu_button" class="ui-btn" style="margin-top: 0.1em; margin-left: 0.1em;background-color: #e7f4fd; border:0; outline: 0;" onclick="ShowMenu()">
+                <img src="img/menu.png" alt="menu" style="width: 20px;">
+            </a>
+        </div>
+    
+        <div data-role = content class="left_money_section" style="height: 30em; background-color: #e7f4fd;">
+            <div style="height: 30em;border:2px solid #000" id="map"></div>
+        </div>
+
+    </div>
+
+
+    <!-- 메뉴 페이지 -->
+    <div class="menu_bg" style="width: 10em;">
+        <div class="menu" style="padding-top: 4em;">
+            <div style="width: 85%; text-align: right;font-size: 1em; font-weight: bold;" onclick="HideMenu()">닫기</div>
+            <div>
+                <div class='menu_button' onclick="location.href='main.html';">◼ Home</div>
+                <div class='menu_button' onclick="location.href='map.html';">◼ 소비 위치정보</div>
+                <div class='menu_button' onclick="location.href='graph.html';">◼ 월별 통계</div>
+                <div class='menu_button' onclick="location.href='graph_2.html';">◼ 카테고리별 통계</div>
+                <div class='menu_button' onclick="location.href='settings.html';">◼ 설정</div>    
+            </div>
+    </div>
+    <div class="menu_bg" style="width: 12.5em; margin-left: 10em; color:transparent" onclick="HideMenu()">
+    </div>
+</body>
+
+</html>

@@ -2,11 +2,15 @@
 <html lang="en" >
 <head>
 <meta charset="UTF-8">
-<title>통계</title>
+<!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<title>통계2</title>
 
 <script  src="js/echarts-5.0.2.min.js"></script>
 <script  src="js/jquery.min.js"></script>
-<link rel="stylesheet" href="css/graph_2.css">
+<link rel="stylesheet" href="./css/graph_2.css">
+
+<script type="text/javascript" src="js/graphDB.js"></script>
+
 
 <script src="js/paymentDB.js"></script>
 <script>
@@ -41,94 +45,36 @@
 	</div>
 
 	<div class="nav-links">
-		<a href="main.html" class="link">Home</a>
-		<a href="" class="link">통계</a>
-		<a href="settings.html" class="link">설정</a>
-		<a href="" class="link">title</a>
+		<a href="main.html" class="link">◼ Home</a>
+		<a href="map.html" class="link">◼ 소비 위치정보</a>
+		<a href="graph.html" class="link">◼ 월별 통계</a>
+		<a href="graph_2.html" class="link">◼ 카테고리별 통계</a>
+		<a href="settings.html" class="link">◼ 설정</a>
 	</div>
 </nav>
 
-<div class="inform">
+       
+<div class="inform" height=100% width=100% >
 	<div class="month">
-		<select data-native-menu="false" name="graphMonth" id="monthselect" style="height: 30px;">
-			<option value="" selected disabled hidden>==선택하세요==</option>
-			<option class="monthoption" value="1">2021년01월</option>
+		<select class="monthselect" name="graphMonth" id="graphMonth">
+		<option class="monthoption" value="1">2021년01월</option>
 			<option class="monthoption" value="2">2021년02월</option>
-			<option class="monthoption" value="3" select="selected">2021년03월</option>
+			<option class="monthoption" value="3">2021년03월</option>
 			<option class="monthoption" value="4">2021년04월</option>
-			<option class="monthoption" value="5">2021년05월</option>
+			<option class="monthoption" value="5">2021년05월</option> 
 			<option class="monthoption" value="6">2021년06월</option>
 		</select>
 	</div>
-	<div class="graphicalbutton">
+<!--	<div class="graphicalbutton">
 		<div class="brokenline"><a href="graph.html" class="logofont">그래프</a>
 		</div>
 		<div class="circular" name="circular1" id="circular1"><a href="" class="logofont">원형</a>
 		</div>
-	</div>
-	<div class="detailed">
+</div> -->
+	<div class="detailed" >
 		<div class="graphical" id="graphical"></div>
 		<div id='detail'></div>
-		<!-- <a href="detailed.html">
-			<div class="databar">
-				<div class="logo"><img src="./img/gw.png" height="80px" width="80px"></div>
-				<div class="databarbig">
-					<div class="databarmini">
-						<div class="name">쇼핑</div>
-						<div class="proportion">40%</div>
-						<div class="data">40000원</div>
-					</div>
-					<div class="dataprogressbar">
-						<div class="dataprogressdetailedbar detailedbarcolor1"></div>
-					</div>
-				</div>
-			</div>
-		</a>
-		<a href="detailed.html">
-			<div class="databar">
-				<div class="logo"><img src="./img/lc.png" height="80px" width="80px"></div>
-				<div class="databarbig">
-					<div class="databarmini">
-						<div class="name">재테그</div>
-						<div class="proportion">30%</div>
-						<div class="data">30000원</div>
-					</div>
-					<div class="dataprogressbar">
-						<div class="dataprogressdetailedbar detailedbarcolor2"></div>
-					</div>
-				</div>
-			</div>
-		</a>
-		<a href="detailed.html">
-			<div class="databar">
-				<div class="logo"><img src="./img/ly.png" height="80px" width="80px"></div>
-				<div class="databarbig">
-					<div class="databarmini">
-						<div class="name">여행</div>
-						<div class="proportion">20%</div>
-						<div class="data">20000원</div>
-					</div>
-					<div class="dataprogressbar">
-						<div class="dataprogressdetailedbar detailedbarcolor3"></div>
-					</div>
-				</div>
-			</div>
-		</a>
-		<a href="detailed.html">
-			<div class="databar">
-				<div class="logo"><img src="./img/qc.png" height="80px" width="80px"></div>
-				<div class="databarbig">
-					<div class="databarmini">
-						<div class="name">교통</div>
-						<div class="proportion">10%</div>
-						<div class="data">10000원</div>
-					</div>
-					<div class="dataprogressbar">
-						<div class="dataprogressdetailedbar detailedbarcolor4"></div>
-					</div>
-				</div>
-			</div>
-		</a> -->
+		
 	</div>
 
 
@@ -142,7 +88,8 @@ $(document).ready(function(){
 		var pitchData = $('#graphMonth option:selected').text();
 		var year = pitchData.split('년')[0]
 		var month = $('#graphMonth').val();
-        document.querySelector('#graphical').innerHTML = '';
+       
+        document.getElementById("graphical").removeAttribute('_echarts_instance_');
 		document.querySelector('#detail').innerHTML = ''
 		readCategoryPayment('all', year, month)
 	})

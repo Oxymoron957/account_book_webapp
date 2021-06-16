@@ -14,6 +14,7 @@
     <script type="text/javascript" src="./js/category.js"></script>
     <script type="text/javascript" src="./js/security_check.js"></script>
     <script type="text/javascript" src="./js/graphDB.js"></script>
+    
     <script src="./js/menu.js"></script>
     
       <style>
@@ -25,23 +26,23 @@
             $('.menu_2' ).hide();
             
             openDB();
-            //   openDB_payment(); // 입출금 정보 DB 생성
-            //   openDB_category(); // 카테고리 DB 생성 
-            //   openDB_auto_transaction() // 자동입출금 DB 생성
 
-            createTableCat(); //카테고리 테이블 생성
-                createTableAuto(); //자동입출금 테이블 생성
+               createTableCat(); //카테고리 테이블 생성
+               createTableAuto(); //자동입출금 테이블 생성
+               createTablePassword();//암호 저장 테이블 생성
                 createCatList(); //자동입출금 테이블에서 불러와 select 선택지 추가해줌
                 createAutoList(); //자동입출금 테이블에서 불러와 자동입출금 관리 페이지에 카드를 추가해줌
                 insertAutoToDB(); //자동입출금 항목의 해당하는 날짜가 되면 알아서 자동입출금 테이블에 추가해줌
                 createCatIcon(); //카테고리 테이블에서 불러와 동그라미 생성해줌
                 createTable();
                 updateAuto();
+                keepPassButton();
+                addCategory_budget();
+
 
               $('#saveAuto').click(function(){
                   addAutoMoney();
                   createAutoList();
-                  
                 });
 
               $('#saveCat').click(function(){
@@ -49,14 +50,39 @@
                 createCatIcon();
               });
 
+              $('#onoff').click(function(){
+                selectPage();
+              });
+
+              $('#saveBu').click(function(){
+                Budget();
+              });
+
+              $('#gotoPass').click(function(){
+                keepPassButton();
+                
+
+              });
+
               $('#deleteButton').click(function(){
                 catDeleteAction();
                 if($(this).html()=='카테고리 삭제'){
                   $(this).html('완 료');
                 }
-                else{
                   $(this).html('카테고리 삭제');
+              });
+
+              $('#onoffPass').click(function(){
+                switchPass();
+                if($(this).html()=='ON'){
+                  $(this).html('OFF');
                 }
+                  $(this).html('ON');
+              });
+
+              $('#gotoPass').click(function(){
+                passwordCheck();
+
               });
 
               $(document).on("click","#autoDel",function(){
@@ -72,6 +98,7 @@
                 deleteCatIcon(id_val);
                 deleteOn();     
               });
+
         });
       </script>
   </head>  
@@ -92,8 +119,11 @@
         <li class="sub"><a class="btn" style="margin-left:1px; color:rgb(0, 0, 0);" href="#budget" data-transition="slide">💰예산 설정</a></li>
         <li class="sub"><a class="btn" style="color: rgb(0, 0, 0);"href="#auto" data-transition="slide">💸자동 입/출금 관리</a></li>
         <li class="sub"><a class="btn" style="color: rgb(0, 0, 0);"href="#category" data-transition="slide">📌카테고리 관리</a></li>
-        <li class="sub"><a class="btn" style="color: rgb(0, 0, 0);"href="#password" data-transition="slide">🔒암호 설정</a></li>
+        <li class="sub"><a class="btn" id="gotoPass" style="color: rgb(0, 0, 0);"href="#" data-transition="slide">🔒암호 관리 </a>
+        </li>
       </ul>    
+
+    
 
       
       <!-- 메뉴 페이지 -->
@@ -115,7 +145,7 @@
 
       <!--##################예산 설정######################-->
     <div data-role="page" id="budget" style="background-color:#e7f4fd">
-      <a href="#main" data-transition="flip"><img src="/img/back.png" style="width: 30px; margin: 10px;"></a> 
+      <a href="#main" data-transition="flip"><img src="./img/back.png" style="width: 30px; margin: 10px;"></a> 
       <p style="margin-left:20px; margin-top: 110px;font-size:35px; color: #494949;"><b>당신의 예산은...</b></p>
       <!--예산에 대한 정보를 입력받는다.(얼마인지만)-->
       <div data-role="content">
@@ -155,9 +185,9 @@
 
   <!--자동 입출금 항목 추가 페이지-->
   <div data-role="dialog" id="addAuto">
-    <div data-role="header">
-      <h1>자동 입/출금</h1>
-      <a href="#auto" data-role="button" data-transition="slidedown" data-icon="delete" data-iconpos="notext" syle="argin-top:10px;"></a>
+    <div data-role="header" style="background-color:#e7f4fd;">
+      <h1>💸 자동 입/출금</h1>
+      <a href="#auto" data-role="button" data-transition="slidedown" data-icon="delete" data-iconpos="notext" ></a>
     </div>
       <!--추가하는 항목에 대한 정보를 입력받는다-->
       <div data-role="content">
@@ -166,13 +196,13 @@
           <table>
             <tr>
               <td>          
-                <select name="select" id="select" data-inline="true">
-                  <option value="deposit">입금</option>
+                <select name="select" id="select" data-inline="true" style="background-color:#e7f4fd;">
+                  <option value="deposit" >입금</option>
                   <option value="withdraw">출금</option>
                 </select>
               </td>
               <td>           
-                <select name="select2" id="select2" data-inline="true">
+                <select name="select2" id="select2" data-inline="true" style="background-color:#e7f4fd;">
                   <option value="0">선택</option>
                 </select>
               </td>
@@ -180,7 +210,7 @@
                 <h4>매 월 </h4>
               </td>
               <td>
-                <input type="number" name="dateAuto" id="dateAuto" min="1" max="31" placeholder="날짜"></input>
+                <input  type="number" name="dateAuto" id="dateAuto" min="1" max="31" placeholder="날" style="width:38px;"></input>
               </td>
               <td>
               <h4>일</h4>
@@ -200,7 +230,7 @@
 
 
         <!--저장 버튼을 누르면 addAutoMoney 발동으로 자동 입출금 테이블에 업로드된다-->
-        <a href="#auto" data-role="button" id="saveAuto" data-transition="slideup">저장</a>
+        <a href="#" data-role="button" id="saveAuto" data-transition="slideup" style="background-color: #ffffff;">저 장 하 기</a>
       </div>
     </div>
   </div>
@@ -227,8 +257,8 @@
 
   <!--카테고리 추가 장-->
   <div data-role="dialog" id="addCat">
-    <div data-role="header">
-      <h1>카테고리 추가</h1>
+    <div data-role="header" style="background-color: #e7f4fd;">
+      <h1>📌 카테고리 추가</h1>
     </div>
     <div data-role="content">
       
@@ -243,7 +273,7 @@
         </table>
       </fieldset>
       <!--저장 버튼을 누르면 addCategory함수 발동해서 카테고리 테이블에 추가-->
-      <a href="#category" data-role="button" id="saveCat" data-transition="slideup" >저장</a>
+      <a href="#" data-role="button" id="saveCat" data-transition="slideup" >저 장 하 기</a>
     </div>
   </div>
 
@@ -253,10 +283,51 @@
 
   <!--##################암호설정######################-->
 
-  <!--비번 체크하는 페이지-->
-  <div data-role="page" id="password" style="background-color:#e7f4fd" >
+  <!--패스워드 메인 화면-->
+  <div data-role="page" id="passwordMain" style="background-color: #e7f4fd;">
+    <a href="#main" data-transition="flip"><img src="./img/back.png" style="width: 30px; margin: 10px;"></a> 
+    <div style="text-align: center;">
+      
+    <h1 style="margin-top: 150px; font-size: 60px; ">앱 잠금
+      <input type="checkbox" id="onoff">
+    </h1>
+    
+  </div>
+  </div>
+
+
+
+
+
+
+
+  <!--비번 체크 페이지-->
+  <div data-role="page" id="checkpassword" style="background-color:#e9e9e9;" >
+    <a href="#main" data-transition="flip"><img src="./img/back.png" style="width: 30px; margin: 10px;"></a> 
+    <form method=post name=number2>
+      <p style="text-align: center; margin-top:70px;font-size:25px;"><b>🔒 암호 입력 🔒</b></p>
+      <table>
+        
+        <tr>
+          <div style="text-align:center;">
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input  maxLength=1 id="number5" name=number5 onkeyup='check_Pass_Enter()' autofocus></td>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input  maxLength=1 id="number6" name=number6 onkeyup='check_Pass_Enter()'></td>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input  maxLength=1 id="number7" name=number7 onkeyup='check_Pass_Enter()'></td>
+          <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input  maxLength=1 id="number8" name=number8 onkeyup='check_Pass_Enter()'></td>
+        </div>
+        </tr>
+        
+      </table>
+      </form>
+    </div>
+
+
+
+  <!--비번 갱신 페이지-->
+  <div data-role="page" id="password" style="background-color:#ffffff;" >
     <form method=post name=number>
-      <p style="text-align: center; margin-top:70px;font-size:25px;"><b>🔒 기존 암호 입력 🔒</b></p>
+      <a href="#passwordMain"  onClick="top.location='javascript:location.reload()'" data-transition="flip"><img src="./img/back.png" style="width: 30px; margin: 10px;"></a> 
+      <p style="text-align: center; margin-top:70px;font-size:25px;"><b>🔒 새 암호 입력 🔒</b></p>
       <table>
         
         <tr>
@@ -271,20 +342,7 @@
       </table>
       </form>
     </div>
-    <!--비번 변경하는 페이지-->
-    <div data-role="page" id="password2" style="background-color:#dddddd;">
-      <form method=post name=number2>
-      <p style="text-align: center; margin-top:70px;font-size:25px;"><b>💫 새 암호 입력 💫</b></p>
-        <table>
-          <tr>
-            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number5" name=number5 onkeyup='change_Pass()' autofocus></td>
-            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number6" name=number6 onkeyup='change_Pass()'></td>
-            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number7" name=number7 onkeyup='change_Pass()'></td>
-            <td style="width:50px; height:50px; font-size:30px; padding-left:20px;padding-right:10px;"><input maxLength=1 id="number8" name=number8 onkeyup='change_Pass()'></td>
-          </tr>
-        </table>
-      </form>
-    </div>
+
 
 
 

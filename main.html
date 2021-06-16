@@ -8,9 +8,11 @@
         <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
         <script  src="js/jquery.min.js"></script>
         <script  src="js/jquery.mobile-1.4.5.min.js"></script>
-        <script  src="js/graphDB.js"></script>
+        
+        <!-- CSS 파일 추가-->
         <link rel="stylesheet" href="./css/main.css"/>
         <link rel="stylesheet" href="./css/menu.css"/>
+        <link rel="stylesheet" href="./css/main_card.css"/>
 
         <style>
             /* 스타일 초기화 */
@@ -21,17 +23,15 @@
         <script src="./js/paymentDB.js"></script>
         <script src="./js/category.js"></script>
         <script src="./js/menu.js"></script>
+        <script src="./js/map.js"></script>
         
         <script>
             // payment DB 연결 및 Table 생성
             // openDB_payment();
             openDB();
-		    createTable();   
-
-            // category DB 연결 및 Table 생성
-            // openDB_category();
+		    createTable(); 
             createTableCat();
-
+            
             // 현재 날짜 저장
             var Now = new Date();
             var NowTime = Now.getFullYear();
@@ -44,6 +44,9 @@
                 $('#PaymentAmount').val('');
                 $('#PaymentName').val('');
             }
+            
+            // 정기적으로 위치정보를 가져온다.
+            const watchID = navigator.geolocation.watchPosition(success, error, options);
 
             // 페이지가 로드되기 전 실행되는 함수 
             $(document).ready(function() { 
@@ -58,7 +61,7 @@
                 get_cur_amount();
                 
                 // 결재 내역을 DB에서 가져온다. 
-                recentPayments();
+                drawCard();
 
                 // 결재 내역을 DB에 추가하는 함수
                 $('#submit1').click( function() {
@@ -69,7 +72,7 @@
                     // DB에 결재 내역을 추가한다.
                     insertPayment();
                     // 최근 결재 내역을 가져와서 카드형식으로 
-                    recentPayments();
+                    drawCard();
                     // 잔액을 표시
                     get_cur_amount();
                     });
@@ -87,7 +90,7 @@
                 id_val = $(this).attr("value");
                 deletePayment(id_val);
                 // 최근 결재 내역을 다시 가져오고 잔액을 다시 표시한다.
-                recentPayments();
+                drawCard();
                 get_cur_amount();
                 })
 
@@ -115,11 +118,15 @@
                 <div class="ui-body ui-body-a" style="border-style: none;background-color: #e7f4fd">
                     <h2 style = "display:inline ">잔액 : </h2>
                     <h2 id = "cur_money" style = "display:inline;"></h2>
+                    <h2 style = "display:inline ">원</h2>
                 </div>
             </div>
 
             <!--지출 내역 확인 공간-->
-            <div data-role="content" class="payment_history"></div>
+            <div class="screen list-view" style="background-image: radial-gradient(circle 248px at center, #e7f4fd 0%, #e7f4fd 47%, #e7f4fd 100%)">
+                <ul id="list-ul">
+                </ul>
+            </div>
            
             <!-- 푸터바 공간 생성 -->
             <div data-role="footer" data-position="fixed" style="height: 4em; text-align: center;background-color: #e7f4fd;border-top:2px solid #000" onclick="HideMenu()">
@@ -168,9 +175,10 @@
                 <div style="width: 85%; text-align: right;font-size: 1em; font-weight: bold;" onclick="HideMenu()">닫기</div>
                 <div>
                     <div class='menu_button' onclick="location.href='main.html';">◼ Home</div>
-          <div class='menu_button' onclick="location.href='graph.html';">◼ 월별 통계</div>
-          <div class='menu_button' onclick="location.href='graph_2.html';">◼ 카테고리별 통계</div>
-          <div class='menu_button' onclick="location.href='settings.html';">◼ 설정</div>    
+                    <div class='menu_button' onclick="location.href='map.html';">◼ 소비 위치정보</div>
+                    <div class='menu_button' onclick="location.href='graph.html';">◼ 월별 통계</div>
+                    <div class='menu_button' onclick="location.href='graph_2.html';">◼ 카테고리별 통계</div>
+                    <div class='menu_button' onclick="location.href='settings.html';">◼ 설정</div>    
                 </div>
         </div>
         <div class="menu_bg" style="width: 12.5em; margin-left: 10em; color:transparent" onclick="HideMenu()">

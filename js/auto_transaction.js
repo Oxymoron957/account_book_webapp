@@ -1,13 +1,4 @@
-var db_auto
-
-//데베 만들기
-function openDB_auto_transaction(){
-    db_auto = window.openDatabase('Auto_Transaction','1.0','자동입출금',1024*1024*5);
-    console.log('DB 생성');
-}
-
-
-//자동 입출금 테이블 만들기 -- 수정(김혜준)
+//자동 입출금 테이블 만들기
 function createTableAuto() {
   db.transaction(function(tr){
   var createSQL = 'create table if not exists auto(id integer primary key autoincrement , name text, type text, category text, day integer, amount integer, updatemonth integer)';      
@@ -28,39 +19,65 @@ function createTableAuto() {
 }
 
 
-  //예산 최초저장 -- 수정
-  function saveBudget(){
+
+
+//예산 관리 함수
+function Budget(){
+  db.transaction(function(tr){
+    var count=0;
+    var selectSQL='select * from auto';
+    
+    tr.executeSql(selectSQL,[],function(tr,rs){
+      for(var i=0;i<rs.rows.length;i++)
+      {
+        if(rs.rows.item(i).name=='이번 달 예산')
+          count=count+1;
+      }
+      updateBudget(count);
+      saveBudget(count);
+    });
+  });
+}
+
+
+  //예산 최초저장
+  function saveBudget(count){
     db.transaction(function(tr){
       var newName = '이번 달 예산';
       var newCategory = '예산';
-      var newFlag="완료";
+      var newFlag="처리 전";
       var newDay=1;
-      var amount=0;
+      var amount=$('#budgetInput').val();
       var month = new Date().getMonth()+1;
-      var insertSQL = 'insert into auto(name,type,category,day,amount,updatemonth) values(?,?,?,?,?,?)';
-      tr.executeSql(insertSQL,[newName,newFlag,newCategory,newDay,amount,month],function(tr,rs){
-      console.log('예산 업댓');
+      if((count==0)&&(amount!=''))
+      {
+        var insertSQL = 'insert into auto(name,type,category,day,amount,updatemonth) values(?,?,?,?,?,?)';
+        tr.executeSql(insertSQL,[newName,newFlag,newCategory,newDay,amount,month],function(tr,rs){
+        console.log('예산 최초저장 완료');
+        });
+      }
   });
-});
-}// 수정 후에 ajax로 ? refresh로 ? 페이지 수정하기
+}
 
 
-
-
-
-
-  //예산 관리 페이지에서 예산 저장 버튼 누르면 발동. 자동으로 예산 업데이트(자동입출금 테이블에서 확인 가능)
-  function updateBudget(){
+//예산 갱신
+  function updateBudget(count){
       db.transaction(function(tr){
       var catBud = "예산";
       var moneyBud=$('#budgetInput').val();
-      var updateSQL = 'update Auto set amount=? where category=?';
-      tr.executeSql(updateSQL,[moneyBud,catBud],function(tr,rs){
+      var T = "처리 전";
+      var updateSQL = 'update Auto set amount=? ,type =? where category=?';
+      if((count!=0)&&(moneyBud!=''))
+      {
+        tr.executeSql(updateSQL,[moneyBud,T,catBud],function(tr,rs){
           console.log('예산 업데이트 완료');
         },function(tr,err){
           console.log('DB오류'+err.message+err.code);
        }
       );
+      }
+
+      deletePayment_Category('예산');
     });  
   }
 
@@ -69,10 +86,9 @@ function createTableAuto() {
 
 
 
-  //자동입출금 관리 페이지에서 추가항목 저장 버튼 누르면 발동. 자동 입출금 테이블에 항목 추가 -- 수정
+  //자동 입출금 테이블에 항목 추가
   function addAutoMoney(){
     db.transaction(function(tr){
-      console.log("실행돼");
       var target=document.getElementById("select");
       var target2=document.getElementById("select2");
 
@@ -83,19 +99,28 @@ function createTableAuto() {
       var day=$('#dateAuto').val();
       var amount=$('#inputAuto').val();
       var updateMonth = new Date().getMonth()+1;
-      if(target.options[target.selectedIndex].text=="출금")
+      if((name=='')||(category=='선택')||(day=='')||(amount==''))
       {
-        
-        amount=amount*(-1);
+        alert("입력하지 않은 정보가 있습니다!");
       }
-      var insertSQL = 'insert into auto(name,type,category,day,amount,updatemonth) values(?,?,?,?,?,?)';
-      console.log("insert?");
-      tr.executeSql(insertSQL,[name,type,category,day,amount,updateMonth], function(tr,rs){
-      console.log('no: ' + rs.insertId);
-      }, function(tr,err){
-        console.log('DB오류'+err.message+err.code);
+      else{
+        if(target.options[target.selectedIndex].text=="출금")
+        {
+          amount=amount*(-1);
+        }
+        var insertSQL = 'insert into auto(name,type,category,day,amount,updatemonth) values(?,?,?,?,?,?)';
+        console.log("insert?");
+        tr.executeSql(insertSQL,[name,type,category,day,amount,updateMonth], function(tr,rs){
+        console.log('no: ' + rs.insertId);
+        document.location.href='#auto';
+        $('#nameAuto').val('');
+        $('#dateAuto').val('');
+        $('#inputAuto').val('');
+        }, function(tr,err){
+          console.log('DB오류'+err.message+err.code);
+        }
+        );
       }
-      );
     });
   }
 
@@ -105,6 +130,7 @@ function createTableAuto() {
   //자동 입출금 목록 테이블에서 가져오기
   function createAutoList(){
     db.transaction(function(tr){
+      $('#autoShowList').empty();
       var selectSQL='select * from auto';
       tr.executeSql(selectSQL,[],function(tr,rs){
         for(var i=0;i<rs.rows.length;i++)
@@ -114,33 +140,63 @@ function createTableAuto() {
           var autoCat=rs.rows.item(i).category;
           var autoDay=rs.rows.item(i).day;
           var autoAmount=rs.rows.item(i).amount;
+          
+          var autoId=rs.rows.item(i).id;
           var autotype;
           if(autoAmount<0)
           {
-            autotype="출금";
+            autotype="출금💸";
+
           }
           else{
-            autotype="입금";
+            autotype="입금😻";
           }
-          //#autoShowList라는 곳에 이 html 요소를 넣어줌. 그럼 for문 하나씩 돌 때 마다 하나씩 추가되겟죠??
-          $('<li style="border:1px solid black; margin-bottom:20px;"><p style="font-size:20px;">'
-            +autoName+' '+autoDay+'일 마다<br/><p style="font-size:30px;">'
-              +autoAmount*(-1)+'원 '+autotype+'</p><br/>카테고리 : '
-                +autoCat+'<br/></li>').appendTo('#autoShowList');
+          //#autoShowList라는 곳에 넣어줌. 
+          $('<li style="border:3px solid black; background-color:white;border-radius:12px; padding:7px; padding-bottom:3px; margin-bottom:20px;"><p style="font-size:16px;"><a href id = "autoDel" style="float: right; height: 10px; text-decoration:none;" value = "'
+          +autoId+'">X</a>'
+            +autoName+' <b>'+autoDay+'</b>일 마다<br/><p style="font-size:22px;"><b>'
+              +Math.abs(autoAmount)+'원</b> '+autotype+'</p><p style="margin-top:px;font-size:14px;text-align:right; color:#949494;">'
+                +autoCat+'</p></li>').appendTo('#autoShowList');
         }
       });
     });
   }
 
+  //자동 입출금 내역 삭제
+  function deleteAuto(id){
+    db.transaction(function(tr){
+        console.log("id : "+id);
+        var deleteSQL = 'delete from auto where id = ?';
+        tr.executeSql(deleteSQL, [id], function(tr,rs){
+            console.log('auto 삭제');
+        }, function(tr,err){
+            console.log('DB 오류'+err.message+err.code);
+        });
+
+    });
+}
 
 
+// 카테고리 삭제할때 쓰이는 삭제한 해당 카테고리에 대한 모든 내용 auto테이블에서 삭제
+function deleteAuto_Category(category){
+  db.transaction(function(tr){
+      
+      var deleteSQL = 'delete from auto where category = ?';
+      tr.executeSql(deleteSQL, [category], function(tr,rs){
+          console.log('auto 삭제');
+      }, function(tr,err){
+          console.log('DB 오류'+err.message+err.code);
+      });
+
+  });
+}
 
 
 
   //자동입출금 payment에 날짜에 따라 반영하기 -- 수정
   function insertAutoToDB(){
     var changeName;
-    
+      
 
     db.transaction(function(tr){
       var today=new Date();
@@ -158,9 +214,13 @@ function createTableAuto() {
       
       selectSQL='select * from auto';
       var test='no';
-      function A(callback){
+      // 처리해야할 날짜가 됐는데 처리 전인 튜플을 찾는 함수
+
+
+      function findAutoToChange(callback){
         tr.executeSql(selectSQL, [], function(tr,rs){
-          
+
+        
           for(var i=0;i<rs.rows.length;i++)
         {
           if((day>=rs.rows.item(i).day)&&(rs.rows.item(i).type==='처리 전'))
@@ -187,7 +247,8 @@ function createTableAuto() {
       });
       }
 
-      function B(id,name,category,amount,autoDay){
+      // A()함수에서 찾은 튜플들을 처리 전--->> 처리 후로 변경하고 paymentDB에 넣는 함수 ########## latitude, longitude
+      function insertToPayment(id,name,category,amount,autoDay){
         console.log(test);
         console.log(id);
         var updateSQL = 'update auto set type=?,updatemonth=? where id = ?';
@@ -212,12 +273,12 @@ function createTableAuto() {
         }
         
       }
-      A(B);
+      findAutoToChange(insertToPayment);
       //name text, category text, year integer, month integer, day integer, amount integer
     });
   }
   
-  // 다음달이 되면 처리후 --> 처리전 되돌리기 --수정
+  // 다음달이 되면 처리후 --> 처리전 되돌리기 
   function updateAuto(){
     const id = [];
 
@@ -231,7 +292,7 @@ function createTableAuto() {
       
       selectSQL='select * from auto';
 
-      function A(callback){
+      function findAutoToChange2(callback){
         tr.executeSql(selectSQL, [], function(tr,rs){
           test='yes';
           for(var i=0;i<rs.rows.length;i++)
@@ -245,7 +306,7 @@ function createTableAuto() {
         });
         }
 
-        function B(){
+        function updateType(){
           var updateSQL = 'update auto set type=? where id = ?';
           for(var i=0;i<id.length;i++){
             tr.executeSql(updateSQL,["처리 전",id[i]],function(tr,rs){
@@ -253,33 +314,8 @@ function createTableAuto() {
             });
           }
         }
-        A(B);
+        findAutoToChange2(updateType);
         //name text, category text, year integer, month integer, day integer, amount integer
       });
     }
 
-
-
-
-
-  function insert2Pay(name,category,year,month,day,amount){
-    db.transaction(function(tr){
-      var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
-      tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
-        console.log('no: ' + rs.insertId);
-      }, function(tr,err){
-        console.log('DB오류'+err.message+err.code);
-      }
-      );
-    });
-  }
-
-  function modifyAuto(i){
-    db.transaction(function(tr){
-      var change='완료';
-      var updateSQL = 'update payment set type=? where rowid=?';
-      tr.executeSql(updateSQL,[change,i],function(tr,rs){
-        console.log(i+" : 완료로 처리");
-      });
-    });
-  }

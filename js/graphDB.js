@@ -1,38 +1,27 @@
-var db = null;
 var var_no = null;
 var position = null;
 var index;
 
-// Database를 생성합니다.
-function openDB(){
-    db = window.openDatabase('testDB','1.0','입출금내역DB',1024*1024*5);
-    console.log('DB 생성');
-}
 
-//카테고리 테이블 만들기
-function createTableCat() 
-{
-  db.transaction(function(tr){
-    var createSQL = 'create table if not exists category(name text, color color)';      
-    tr.executeSql(createSQL, [], function(){
-      console.log('카테고리 테이블 생성 sql 실행 성공');
-    },function(){
-      console.log('카테고리 테이블 생성 sql 실행 실패');
-    },function(){
-      console.log('카테고리 테이블 생성 트랜잭션 실패 , 롤백 자동');
-    },function(){
-      console.log('카테고리 테이블 생성 트랜잭션 성공');
-    }
-  );          
-});
+// 해당 category인 payment를 모두 삭제한다.(setting 페이지에서 카테고리 삭제를 할때 사용)
+function deletePayment_Category(category){
+    db.transaction(function(tr){
+        
+        var deleteSQL = 'delete from payment where category = ?';
+        tr.executeSql(deleteSQL, [category], function(tr,rs){
+            console.log(category+' 삭제');
+        }, function(tr,err){
+            console.log('DB 오류'+err.message+err.code);
+        });
+  
+    });
 }
-
 
 //Payment테이블 생성
 function createTable() {
     db.transaction(function(tr){
     // var deleteSQL = 'drop table payment';
-    var createSQL = 'create table if not exists payment(id integer primary key autoincrement ,name text, category text, year integer, month integer, day integer, amount integer)';      
+    var createSQL = 'create table if not exists payment(id integer primary key autoincrement ,name text, category text, year integer, month integer, day integer, amount integer, latitude double, longitude double)';      
     // tr.executeSql(deleteSQL);
     
     tr.executeSql(createSQL, [], function(){
@@ -45,83 +34,11 @@ function createTable() {
      }, function(){
         console.log('2_2_테이블 생성 트랜잭션 성공...');
       });
-  }
-
-/*
-결재 정보를 저장합니다.
-name : 결재내용, id = PaymentName
-category : 카테고리, id = PaymentCategory
-year, month, day : 현재날짜, 자동 입력됨
-amount : 금액, id = PaymentAmount
-*/
-function insertPayment(){
-    db.transaction(function(tr){
-        var name = $('#id_memo').val();
-        var category = $('#id_category').val();
-        var now = new Date();
-        var year = now.getFullYear();
-        var month = now.getMonth()+1;
-        var day = now.getDate();
-        var amount = $('#id_money').val();
-        var insertSQL = 'insert into payment(name,category,year,month,day,amount) values(?,?,?,?,?,?)';
-        
-        if(name!=''&&category!=''&&amount!=''){
-            tr.executeSql(insertSQL,[name,category,year,month,day,amount], function(tr,rs){
-                console.log('no: ' + rs.insertId);
-            }, function(tr,err){
-                console.log('DB오류'+err.message+err.code);
-                }
-            );
-        }
-        else
-        {
-            console.log('입력을 해주세요');
-        }
-    });
 }
 
-/*
-내역을 수정한다. 
-ID를 통해 newName, newCategory, newAmount를 받아 값을 갱신한다.
-*/
-function updatePayment(){
-    db.transaction(function(tr){
-        var newName = $('#newName').val();
-        var newCategory = $('#newCategory').val();
-        // var newMonth = $('#newMonth').val();
-        // var newDay = $('#newDay').val();
-        var newAmount = $('#newAmount').val();
-        
-        var paymentID = $('#paymentID').val();
-        var updateSQL = 'update payment set name=? category=? amount=? where id=?';
-        tr.executeSql(updateSQL,[newName,newCategory,newAmount,paymentID],function(tr,rs){
-            console.log('내역 수정');
-
-        }, function(tr, err){
-            console.log('DB 오류'+err.message + err.code);
-        })
-    })
-}// 수정 후에 ajax로 ? refresh로 ? 페이지 수정하기
-
-/*
-Payment id를 받아 Payment 정보 삭제
-*/
-function deletePayment(){
-    db.transaction(function(tr){
-        var id = $('#deletePaymentId').val();
-        var deleteSQL = 'delete from payment where id = ?';
-        tr.executeSql(deleteSQL, [id], function(tr,rs){
-            console.log('Payment 삭제');
-            //화면 업데이트 
-        }, function(tr,err){
-            console.log('DB 오류'+err.message+err.code);
-        });
-
-    });
-}
-
-function readCategoryPayment_month(category){
-    console.log('실행@@@@@');
+// 그래프 페이지(graph.html)에서 카테고리를 선택하면 그 카테고리에 맞는 지출내역(수입+지출)을 card로 표시한다.(select box의 option의 선택 년도,월에 맞는)
+function drawCard_month(category){
+    // console.log('실행@@@@@');
     db.transaction(function(tr){
         const paymentID = [];
         const paymentName = [];
@@ -242,7 +159,7 @@ function readCategoryPayment_month(category){
                 cDate.innerText = Y[i]+"년 "+M[i]+"월 "+D[i]+"일 ";
 
                 thumbnail.appendChild(tumbImg);
-                thumbnail.appendChild(tumbInfo);
+                thumbnail.appendChild(cDate);
                 
 
                 let details = document.createElement('div');
@@ -254,13 +171,16 @@ function readCategoryPayment_month(category){
 
                 let money = document.createElement('div');
                 money.className = "money";
-                money.innerText = paymentAmount[i]+"￦";
+                money.innerText = addComma(paymentAmount[i])+"￦";
 
-                details.appendChild(name);
                 details.appendChild(money);
+                details.appendChild(tumbInfo);
+                
+                // firstRow.appendChild(thumbnail);
+                // firstRow.appendChild(cDate);
 
+                firstRow.appendChild(name);
                 firstRow.appendChild(thumbnail);
-                firstRow.appendChild(cDate);
 
                 card.appendChild(firstRow);
                 card.appendChild(details);
@@ -269,37 +189,14 @@ function readCategoryPayment_month(category){
                 
                 document.getElementById("list-ul").appendChild(list);
 
-                // $("#list-ul").append("<li>test</li>");
-                // $("#list-ul").append("<li class=\"list-item\" data-id =\""
-                // +paymentID[i]+
-                // "\">\n\
-                //             <div class=\"card\">\n\
-                //                 <div class=\"thumbnail\">\n\
-                //                     <div class=\"tumbImg\" style=\"background: "
-                //                     + categoryColor[i] +
-                //                     ";\"></div>\n\
-                //                     <div class=\"tumbInfo\">"
-                //                         + paymentCategory[i] +   
-                //                     "</div>\n\
-                //                 </div>\n\
-                //                 <div class=\"details\">\n\
-                //                     <div class=\"name\">"
-                //                     + paymentName[i] +
-                //                     "</div>\n\
-                //                     <div class=\"money\">"
-                //                     + paymentAmount[i] +
-                //                     "</div>\n\
-                //                 </div>\n\
-                //             </div>\n\
-                //         </li>");
             }
         }
         readPaymentAll(addCard);
     });    
 }
 
-// 카테고리별 지출 내역 (선택 연도,월에 지출내역 표시 -> 각각 반복문에서 카드를 만들고 값 표시)
-function readCategoryPayment(category){
+// 그래프 페이지를 처음 만들면 현재 날짜에 따라서 (ex) 2021년 6월 6일에 키면 2021년 6월의) 내역을 card로 출력한다.
+function drawCard(category){
     
     // const paymentID = [];
     // const paymentName = [];
@@ -420,7 +317,7 @@ function readCategoryPayment(category){
                 cDate.innerText = Y[i]+"년 "+M[i]+"월 "+D[i]+"일 ";
 
                 thumbnail.appendChild(tumbImg);
-                thumbnail.appendChild(tumbInfo);
+                thumbnail.appendChild(cDate);
                 
 
                 let details = document.createElement('div');
@@ -432,13 +329,16 @@ function readCategoryPayment(category){
 
                 let money = document.createElement('div');
                 money.className = "money";
-                money.innerText = paymentAmount[i]+"￦";
+                money.innerText = addComma(paymentAmount[i])+"￦";
 
-                details.appendChild(name);
                 details.appendChild(money);
+                details.appendChild(tumbInfo);
+                
+                // firstRow.appendChild(thumbnail);
+                // firstRow.appendChild(cDate);
 
+                firstRow.appendChild(name);
                 firstRow.appendChild(thumbnail);
-                firstRow.appendChild(cDate);
 
                 card.appendChild(firstRow);
                 card.appendChild(details);
@@ -476,35 +376,9 @@ function readCategoryPayment(category){
     });    
 }
 
-// 선택한 연도,월에 ex) 2021 5월의 지출 총액 조회(원형 그래프에서 1. 전체지출)
-function readCategoryPaymentAmountSum_present(category){
-    db.transaction(function(tr){
-        var selectSQL;
-        var year = $('#graphYear').val();
-        var month = $('#graphMonth').val();
-        if(category==='all')
-        {
-            selectSQL = 'select sum(amount) from payment where year =? and month = ?';
-            tr.executeSql(selectSQL, [year,month], function(tr,rs){
-                console.log('지출 내역 조회' + rs.rows.length+'건');
-                // 현재 월 지출 총액
-                // rs.rows.item(0)['sum(amount)']
-            });
-        }
-        else
-        {
-            selectSQL = 'select sum(amount) from payment where year =? and month = ? and category = ?';
-            tr.executeSql(selectSQL, [year,month,category], function(tr,rs){
-                console.log('지출 내역 조회' + rs.rows.length+'건');
-                // 현재 월 지출 총액
-                // rs.rows.item(0)['sum(amount)']
-            });
-        }   
-    });
-}
 
-// 현재 연도에 월별 지출액 (선형 그래프에서 표시)
-function readCategoryPaymentAmountSum_All(category){
+// 선형 그래프를 그리는 함수
+function drawChart(category){
     var arr = [0,0,0,0,0,0,0,0,0,0,0,0];
     var flag=0;
     var label1='1';
@@ -661,10 +535,13 @@ function readCategoryPaymentAmountSum_All(category){
     
 }
 
+// select box에 option를 달고 option마다 이벤트 리스너를 연결하는 함수
+//상세내용 : select box에서 선택하면 그에 맞는 해당 year month 지출내역을 card로 출력한다. +  그래프페이지 상단 select box에 동적으로 payment 테이블에 있는 year, month를 option으로 등록한다.
 function month(){
     readMonth(addListener_select);
 }
 
+// select box에서 선택하면 그에 맞는 해당 year month 지출내역을 card로 출력한다. 
 function addListener_select(){
 
     var selector = document.getElementById('monthselect');
@@ -673,11 +550,11 @@ function addListener_select(){
         // var Y = selector.value.substr(0,4);
         // var M = selector.value.substr(5,selector.value.length-5);
         
-        readCategoryPayment_month('all');
+        drawCard_month('all');
     });
 }
 
-
+// 그래프페이지 상단 select box에 동적으로 payment 테이블에 있는 year, month를 option으로 등록한다.
 function readMonth(callback){
 
     
@@ -710,30 +587,15 @@ function readMonth(callback){
      
 }
 
-// 수입 테이블 create
+// 그래프페이지(graph.html)에서 갈 수 있는 카테고리 페이지에 동그라미를 그리고 myFunction을 동그라미에 연결한다.
+function createCatIcon(){
 
-
-// 수입 테이블 관리 (insert, update, select)
-// 초기예산+ 각 수입
-
-function createCatIcon(callback){
-    // document.getElementById('catIcons').onclick = function(){
-    //     var categoryCircles = document.getElementsByClassName('dot-wrap2');
-    //     for(var i=0;i<categoryCircles.length;i++)
-    //     {
-    //         var categoryCircle = categoryCircles[i];
-            
-    //         categoryCircle.onclick = function() {
-    //             console.log(categoryCircle);
-    //         }
-    //     }
-        
-    // };
     db.transaction(function(tr){
       var selectSQL='select * from category';
 
       function setCategory(callback){
         tr.executeSql(selectSQL,[],function(tr,rs){
+            $('#catIcons').empty();
             //dot-wrap : 동그라미들을 예쁘게 나열하려고 설정 동그라미들을 감싸주는 역할
             $('<div class="dot-wrap" id="dot-wrap">').appendTo('#catIcons');
             //   var target=document.getElementById('#dot-wrap');
@@ -785,12 +647,18 @@ function createCatIcon(callback){
     }); 
 }
 
+// 그래프페이지(graph.html) 에서 들어갈 수 있는 카테고리 페이지에서 쓰이는 클릭메서드(클릭시 선택 카테고리에 대한 card 출력)
 function myFunction(){
     
     var X = $(this).data('name');
     var catName = X.substr(0,X.length-1);
     console.log(catName);
-    // readCategoryPaymentAmountSum_All(catName);
-    readCategoryPayment_month(catName);
-    
+    // drawChart(catName);
+    drawCard_month(catName);
 }
+
+// 숫자를 받아 3자리마다 ,찍기
+function addComma(num) {
+    var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    return num.toString().replace(regexp, ',');
+  }
